@@ -1,0 +1,12 @@
+﻿__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+.env
+instance/
+.pytest_cache/
+node_modules/
