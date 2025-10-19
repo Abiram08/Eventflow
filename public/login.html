@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow - Login/Signup</title>
+    <style>
+        /* Your existing styles unchanged */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #6b21a8 0%, #8b5cf6 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: #333; position: relative; }
+        .back-button { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.9); color: #6b21a8; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; }
+        .back-button:hover { background: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+        .form-card { width: 100%; max-width: 400px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); padding: 40px; }
+        .form-title { text-align: center; margin-bottom: 30px; color: #6b21a8; font-size: 28px; }
+        .form-container { display: none; }
+        .form-container.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px; transition: border 0.3s; }
+        .form-group input:focus { border-color: #6b21a8; outline: none; }
+        .remember-forgot { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; }
+        .remember { display: flex; align-items: center; }
+        .remember input { margin-right: 5px; }
+        .forgot-password { color: #6b21a8; text-decoration: none; }
+        .forgot-password:hover { text-decoration: underline; }
+        .submit-btn { width: 100%; padding: 12px; background: #6b21a8; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-bottom: 20px; }
+        .submit-btn:hover { background: #581c87; }
+        .switch-form { text-align: center; margin-top: 20px; font-size: 14px; }
+        .switch-form a { color: #6b21a8; text-decoration: none; cursor: pointer; font-weight: 500; }
+        .switch-form a:hover { text-decoration: underline; }
+        .social-login { margin-top: 30px; text-align: center; }
+        .social-login p { margin-bottom: 15px; position: relative; }
+        .social-login p::before, .social-login p::after { content: ''; position: absolute; width: 40%; height: 1px; background: #ddd; top: 50%; }
+        .social-login p::before { left: 0; }
+        .social-login p::after { right: 0; }
+        .social-icons { display: flex; justify-content: center; gap: 15px; }
+        .social-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 50%; transition: all 0.3s; cursor: pointer; }
+        .social-icon:hover { background: #f5f5f5; transform: translateY(-3px); }
+        .message { text-align: center; margin-top: 10px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">←</button>
+    
+    <div class="form-card">
+        <div class="form-container active" id="login-form">
+            <h2 class="form-title">Login</h2>
+            <form id="login-form-submit">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <div class="remember-forgot">
+                    <div class="remember">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <div id="login-message" class="message"></div>
+            <div class="switch-form">
+                <p>Don't have an account? <a onclick="showForm('signup')">Sign Up</a></p>
+            </div>
+            <div class="social-login">
+                <p>Or login with</p>
+                <div class="social-icons">
+                    <div class="social-icon" onclick="loginWithGoogle()">G</div>
+                    <div class="social-icon">f</div>
+                    <div class="social-icon">in</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-container" id="signup-form">
+            <h2 class="form-title">Create Account</h2>
+            <form id="signup-form-submit">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-type">I am a:</label>
+                    <select id="user-type" required style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px;">
+                        <option value="">Please select...</option>
+                        <option value="student">Student</option>
+                        <option value="organizer">Event Organizer</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Create Account</button>
+            </form>
+            <div id="signup-message" class="message"></div>
+            <div class="switch-form">
+                <p>Already have an account? <a onclick="showForm('login')">Login</a></p>
+            </div>
+            <div class="social-login">
+                <p>Or sign up with</p>
+                <div class="social-icons">
+                    <div class="social-icon" onclick="loginWithGoogle()">G</div>
+                    <div class="social-icon">f</div>
+                    <div class="social-icon">in</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showForm(formId) {
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(formId + '-form').classList.add('active');
+            document.getElementById('login-message').textContent = '';
+            document.getElementById('signup-message').textContent = '';
+        }
+        
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Login Form Submission
+        document.getElementById('login-form-submit').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const identifier = document.getElementById('login-email').value; // Can be email or username
+            const password = document.getElementById('login-password').value;
+            const messageDiv = document.getElementById('login-message');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        identifier: identifier, // Changed from email to identifier
+                        password: password 
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Login failed');
+                }
+
+                const data = await response.json();
+                
+                // Store the token
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    if (data.user?.is_admin) {
+                        localStorage.setItem('adminToken', data.token);
+                    }
+                }
+                
+                messageDiv.style.color = 'green';
+                messageDiv.textContent = 'Login successful! Redirecting...';
+                
+                // Redirect based on user type
+                const redirectTo = data.user?.is_admin ? 'admin.html' : 'index.html';
+                setTimeout(() => window.location.href = redirectTo, 1000);
+            } catch (error) {
+                console.error('Login error:', error);
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Login failed: ' + (error.message || 'Please check your credentials');
+            }
+        });
+
+        // Signup Form Submission
+        document.getElementById('signup-form-submit').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
+            const userType = document.getElementById('user-type').value;
+            const messageDiv = document.getElementById('signup-message');
+
+            if (password !== confirmPassword) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Passwords do not match!';
+                return;
+            }
+            
+            if (!userType) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Please select whether you are a student or organizer!';
+                return;
+            }
+
+            try {
+                // Use relative URL to avoid CORS issues
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        username: username,
+                        email: email, 
+                        password: password,
+                        user_type: userType
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Signup failed');
+                }
+
+                const data = await response.json();
+                messageDiv.style.color = 'green';
+                messageDiv.textContent = 'Signup successful! Redirecting to login...';
+                
+                // Clear form
+                document.getElementById('signup-form-submit').reset();
+                
+                // Switch to login form after delay
+                setTimeout(() => {
+                    showForm('login');
+                    document.getElementById('signup-message').textContent = '';
+                }, 2000);
+            } catch (error) {
+                console.error('Signup error:', error);
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Signup failed: ' + (error.message || 'Please try again');
+            }
+        });
+
+        // Placeholder for Google login (not implemented with MongoDB here)
+        async function loginWithGoogle() {
+            const messageDiv = document.getElementById('login-message');
+            messageDiv.style.color = 'red';
+            messageDiv.textContent = 'Google login not implemented yet.';
+        }
+    </script>
+</body>
+</html>

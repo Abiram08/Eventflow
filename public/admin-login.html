@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles matching login.html */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #6b21a8 0%, #8b5cf6 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: #333; position: relative; }
+        .back-button { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.9); color: #6b21a8; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; }
+        .back-button:hover { background: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+        .form-card { width: 100%; max-width: 400px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); padding: 40px; }
+        .form-title { text-align: center; margin-bottom: 30px; color: #6b21a8; font-size: 28px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px; transition: border 0.3s; }
+        .form-group input:focus { border-color: #6b21a8; outline: none; }
+        .remember-forgot { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px; }
+        .remember { display: flex; align-items: center; }
+        .remember input { margin-right: 5px; }
+        .forgot-password { color: #6b21a8; text-decoration: none; }
+        .forgot-password:hover { text-decoration: underline; }
+        .submit-btn { width: 100%; padding: 12px; background: #6b21a8; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-bottom: 20px; }
+        .submit-btn:hover { background: #581c87; }
+        .switch-form { text-align: center; margin-top: 20px; font-size: 14px; }
+        .switch-form a { color: #6b21a8; text-decoration: none; cursor: pointer; font-weight: 500; }
+        .switch-form a:hover { text-decoration: underline; }
+        .error-message { color: #e74c3c; margin-top: 15px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">←</button>
+    
+    <div class="form-card">
+        <h2 class="form-title">Admin Login</h2>
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="remember-forgot">
+                <div class="remember">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Login</button>
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+        <div class="switch-form">
+            <p><a href="index.html">Back to Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+        
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const rememberMe = document.getElementById('remember').checked;
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store the token in localStorage
+                    localStorage.setItem('adminToken', data.token);
+                    if (rememberMe) {
+                        localStorage.setItem('adminUsername', username);
+                    } else {
+                        localStorage.removeItem('adminUsername');
+                    }
+                    // Redirect to admin dashboard
+                    window.location.href = 'admin.html';
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message || 'An error occurred during login';
+                errorMessage.style.display = 'block';
+                console.error('Login error:', error);
+            }
+        });
+        
+        // Check if already logged in
+        if (localStorage.getItem('adminToken')) {
+            // Verify token is still valid
+            fetch('http://localhost:5000/api/admin/verify', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'admin.html';
+                }
+            })
+            .catch(error => {
+                console.error('Token verification failed:', error);
+                localStorage.removeItem('adminToken');
+            });
+        }
+        
+        // Fill in saved username if remember me was checked
+        const savedUsername = localStorage.getItem('adminUsername');
+        if (savedUsername) {
+            document.getElementById('username').value = savedUsername;
+            document.getElementById('remember').checked = true;
+        }
+    </script>
+</body>
+</html>
