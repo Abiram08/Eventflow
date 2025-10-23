@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e4e8;
+            --dark-gray: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .logo:hover {
+            color: #8b5cf6;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            color: #6b21a8;
+            background-color: #f3e8ff;
+        }
+
+        .nav-link i {
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 220px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            display: block;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .create-btn,
+        .login-btn,
+        .admin-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .create-btn:hover,
+        .login-btn:hover,
+        .admin-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        /* All Events Section */
+        .all-events {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            flex: 1;
+        }
+
+        .all-events-header {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .all-events-header h1 {
+            color: #334155;
+            font-size: 32px;
+        }
+
+        .filter-container {
+            position: relative;
+        }
+
+        .filter-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover {
+            background-color: #8b5cf6;
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: none;
+            z-index: 10;
+            min-width: 200px;
+        }
+
+        .filter-dropdown.active {
+            display: block;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .event-details {
+            padding: 24px;
+        }
+
+        .event-details h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .event-details p {
+            color: #64748b;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .event-time {
+            color: #475569;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .event-date {
+            color: #6b21a8;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .event-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px; /* Space between buttons */
+        }
+
+        .event-btn:hover {
+            background-color: #8b5cf6;
+        }
+
+        .register-btn {
+            background-color: #2e1065; /* Slightly darker shade for distinction */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .register-btn:hover {
+            background-color: #8b5cf6;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: white;
+            padding: 80px 24px 40px;
+            margin-top: auto;
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo-section {
+            flex: 0 0 300px;
+        }
+
+        .footer-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            font-size: 24px;
+            color: #6b21a8;
+        }
+
+        .footer-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+        }
+
+        .footer-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-nav {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+        }
+
+        .footer-nav-column {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .footer-nav-title {
+            color: #334155;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-nav-list {
+            list-style: none;
+        }
+
+        .footer-nav-item {
+            margin-bottom: 12px;
+        }
+
+        .footer-nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 14px;
+            transition: color 0.2s ease;
+            display: inline-block;
+        }
+
+        .footer-nav-link:hover {
+            color: #6b21a8;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-social-link {
+            color: #64748b;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .footer-social-link:hover {
+            color: #6b21a8;
+            transform: translateY(-2px);
+        }
+
+        .footer-legal {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .footer-legal-link {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-legal-link:hover {
+            color: #6b21a8;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 12px 16px;
+            }
+
+            .dropdown-menu {
+                position: static;
+                width: 100%;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background-color: #f8fafc;
+                margin-top: 4px;
+                display: none;
+            }
+
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+
+            .user-menu {
+                gap: 12px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .all-events-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .filter-dropdown {
+                position: static;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                gap: 40px;
+            }
+
+            .footer-logo-section {
+                flex: 0 0 100%;
+            }
+
+            .footer-nav {
+                gap: 40px;
+            }
+
+            .footer-nav-column {
+                flex: 0 0 calc(50% - 20px);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin-login.html" class="nav-link">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn" id="create-event-btn" style="display: none;">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+                <a href="login.html" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- All Events Section -->
+    <section class="all-events">
+        <div class="all-events-header">
+            <h1>All Events</h1>
+            <div class="filter-container">
+                <button class="filter-btn">Filter Events</button>
+                <div class="filter-dropdown">
+                    <div class="filter-group">
+                        <label for="event-type-filter">Event Type</label>
+                        <select id="event-type-filter">
+                            <option value="all">All Types</option>
+                            <option value="Technical Events">Technical Events</option>
+                            <option value="Non-Technical Events">Non-Technical Events</option>
+                            <option value="Hackathon">Hackathon</option>
+                            <option value="Ideathon">Ideathon</option>
+                            <option value="Project Presentation">Project Presentation</option>
+                            <option value="Paper Presentation">Paper Presentation</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Seminar">Seminar</option>
+                            <option value="Conference">Conference</option>
+                            <option value="Competition">Competition</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="department-filter">Department</label>
+                        <select id="department-filter">
+                            <option value="all">All Departments</option>
+                            <option value="All">Institution Level</option>
+                            <option value="CSE">Computer Science</option>
+                            <option value="ECE">Electronics & Communication</option>
+                            <option value="ME">Mechanical Engineering</option>
+                            <option value="CE">Civil Engineering</option>
+                            <option value="EE">Electrical Engineering</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="club-filter">Club</label>
+                        <select id="club-filter">
+                            <option value="all">All Clubs</option>
+                            <!-- Clubs will be dynamically populated -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="events-grid" id="events-grid"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo-section">
+                    <a href="index.html" class="footer-logo">
+                        <i class="fas fa-bolt footer-logo-icon"></i>
+                        <span class="footer-logo-text">EventFlow</span>
+                    </a>
+                    <p class="footer-description">
+                        The modern platform for discovering, creating, and managing events that connect communities and bring people together.
+                    </p>
+                </div>
+
+                <div class="footer-nav">
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Discover</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="browse-events.html" class="footer-nav-link">All Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                            <li class="footer-nav-item">
+                                <a href="calendar-view.html" class="footer-nav-link">Calendar</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Organize</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="create-event.html" class="footer-nav-link">Create Event</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="managing-events.html" class="footer-nav-link">Manage Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="pricing.html" class="footer-nav-link">Pricing</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Company</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="about.html" class="footer-nav-link">About Us</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="contact.html" class="footer-nav-link">Contact</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="careers.html" class="footer-nav-link">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+
+                <div class="footer-legal">
+                    <span>© 2025 EventFlow. All rights reserved.</span>
+                    <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const eventsGrid = document.getElementById('events-grid');
+            const filterBtn = document.querySelector('.filter-btn');
+            const filterDropdown = document.querySelector('.filter-dropdown');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const createEventBtn = document.getElementById('create-event-btn');
+
+            // Authentication Check and role-based UI updates
+            const token = localStorage.getItem('token');
+            if (token) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+                
+                // Check user role and show create event button for organizers/admins
+                try {
+                    fetch('http://localhost:5000/api/auth/verify', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }).then(response => response.json())
+                    .then(userData => {
+                        if (userData.user && (userData.user.user_type === 'organizer' || userData.user.is_admin)) {
+                            createEventBtn.style.display = 'inline-flex';
+                        }
+                    }).catch(error => console.log('Could not verify user role:', error));
+                } catch (error) {
+                    console.log('Could not check user role:', error);
+                }
+            }
+
+            // Logout Functionality (aligned with index.html)
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.reload();
+            });
+
+            // Mobile menu functionality
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Filter dropdown toggle
+            filterBtn.addEventListener('click', function() {
+                filterDropdown.classList.toggle('active');
+            });
+
+            // Filter functionality
+            const eventTypeFilter = document.getElementById('event-type-filter');
+            const departmentFilter = document.getElementById('department-filter');
+            const clubFilter = document.getElementById('club-filter');
+            let allEvents = [];
+
+            // Fetch and render all events with register button
+            async function fetchAllEvents() {
+                try {
+                    // Fetch events from the public endpoint (no auth required)
+                    const response = await fetch('http://localhost:5000/api/events');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    allEvents = await response.json();
+                    
+                    // Sort by date (earliest first)
+                    allEvents = allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    // Populate club filter with unique clubs
+                    populateClubFilter();
+                    
+                    renderEvents(allEvents);
+                } catch (error) {
+                    console.error('Error fetching events:', error);
+                    eventsGrid.innerHTML = '<p>Failed to load events. Please try again later.</p>';
+                }
+            }
+
+            function populateClubFilter() {
+                const clubs = new Set();
+                allEvents.forEach(event => {
+                    const clubName = event.clubName || event.club_name;
+                    if (clubName && clubName !== 'No Club') {
+                        clubs.add(clubName);
+                    }
+                });
+                
+                const clubFilterSelect = document.getElementById('club-filter');
+                clubs.forEach(club => {
+                    clubFilterSelect.innerHTML += `<option value="${club}">${club}</option>`;
+                });
+            }
+
+            function renderEvents(events) {
+                if (events.length === 0) {
+                    eventsGrid.innerHTML = '<p style="text-align: center; padding: 40px; color: #64748b;">No events match the selected filters.</p>';
+                    return;
+                }
+
+                eventsGrid.innerHTML = events.map(event => {
+                    // Create a default image URL if no poster is available
+                    const posterUrl = event.poster || event.image_url
+                        ? (event.poster || event.image_url).startsWith('http') 
+                            ? (event.poster || event.image_url)
+                            : (event.poster || event.image_url).startsWith('/') 
+                                ? `http://localhost:5000${event.poster || event.image_url}`
+                                : `http://localhost:5000/${event.poster || event.image_url}`
+                        : 'https://via.placeholder.com/300x200?text=No+Image';
+                    
+                    return `
+                        <div class="event-card">
+                            <div class="event-image" style="background-image: url('${posterUrl}')">
+                                ${event.is_featured ? '<div class="featured-badge">Featured</div>' : ''}
+                            </div>
+                            <div class="event-details">
+                                <h3>${event.eventName || event.title}</h3>
+                                <p class="event-club">${event.clubName || event.club_name || 'No Club'}</p>
+                                <p class="event-description">${event.description ? (event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '')) : 'No description available'}</p>
+                                <div class="event-meta">
+                                    <div class="event-time"><i class="far fa-clock"></i> ${event.timing || 'Time TBD'}</div>
+                                    <div class="event-date"><i class="far fa-calendar"></i> ${event.date ? new Date(event.date).toLocaleDateString() : 'Date TBD'}</div>
+                                    <div class="event-venue"><i class="fas fa-map-marker-alt"></i> ${event.venue || event.location || 'Venue TBD'}</div>
+                                </div>
+                                <div class="event-actions">
+                                    <button class="event-btn" onclick="location.href='event-details.html?id=${event.id}'">Learn More</button>
+                                    ${(event.registrationType || event.registration_type) === 'Online' ? 
+                                        `<a href="${event.registrationLink || '#'}" class="register-btn" target="_blank">Register Now</a>` : 
+                                        `<button class="register-btn offline">${event.registrationType || event.registration_type || 'Registration'}</button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Apply filters
+            function applyFilters() {
+                const eventType = eventTypeFilter.value;
+                const department = departmentFilter.value;
+                const club = clubFilter.value;
+
+                const filteredEvents = allEvents.filter(event => {
+                    const matchesEventType = eventType === 'all' || 
+                        (event.eventType || event.event_type) === eventType;
+                    
+                    const matchesDepartment = department === 'all' || 
+                        event.department === department;
+                    
+                    const matchesClub = club === 'all' || 
+                        (event.clubName || event.club_name) === club;
+
+                    return matchesEventType && matchesDepartment && matchesClub;
+                });
+
+                renderEvents(filteredEvents);
+            }
+
+            // Add event listeners for filters
+            eventTypeFilter.addEventListener('change', applyFilters);
+            departmentFilter.addEventListener('change', applyFilters);
+            clubFilter.addEventListener('change', applyFilters);
+
+            // Initial fetch of all events
+            fetchAllEvents();
+        });
+    </script>
+</body>
+</html>

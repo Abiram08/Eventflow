@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-section {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .dashboard-header h1 {
+            color: #334155;
+            font-size: 36px;
+        }
+        .create-event-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .create-event-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+        .registered-events-section {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .registered-events-section h2 {
+            color: #334155;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+        .registered-event {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        .registered-event:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .event-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            background-color: #f1f5f9;
+            flex-shrink: 0;
+        }
+        .event-details {
+            flex: 1;
+        }
+        .event-title {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .event-date {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .event-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-registered {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-waitlisted {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status-attended {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .quick-stats {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .quick-stats h2 {
+            color: #334155;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #6b21a8;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .no-events {
+            text-align: center;
+            color: #64748b;
+            padding: 40px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li class="nav-item"><a href="events.html" class="nav-link"><i class="fas fa-calendar"></i> Events</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-item"><a href="admin.html" class="nav-link"><i class="fas fa-user"></i> Admin</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn active"><i class="fas fa-plus"></i> Create Event</a>
+                <a href="login.html" class="login-btn" id="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-section">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-tachometer-alt"></i> Organizer Dashboard</h1>
+                <a href="edit-event.html" class="create-event-btn">
+                    <i class="fas fa-plus"></i> Create New Event
+                </a>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="registered-events-section">
+                    <h2><i class="fas fa-calendar-check"></i> My Registered Events</h2>
+                    <div id="registered-events-list">
+                        <div class="no-events">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 16px;"></i>
+                            <p>Loading your registered events...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-stats">
+                    <h2><i class="fas fa-chart-bar"></i> Quick Stats</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-events">0</div>
+                            <div class="stat-label">Total Events</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="upcoming-events">0</div>
+                            <div class="stat-label">Upcoming</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 EventFlow. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check user type from token
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const userType = payload.user_type;
+
+                if (!(userType === 'organizer' || payload.is_admin)) {
+                    alert('You need to be an organizer to access this page.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+
+                // Load registered events
+                loadRegisteredEvents();
+
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+
+            async function loadRegisteredEvents() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/my-events', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch registered events');
+                    }
+
+                    const events = await response.json();
+                    renderRegisteredEvents(events);
+
+                } catch (error) {
+                    console.error('Error loading registered events:', error);
+                    document.getElementById('registered-events-list').innerHTML = `
+                        <div class="no-events">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 16px; color: #ef4444;"></i>
+                            <p>Failed to load registered events. Please try again later.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            function renderRegisteredEvents(events) {
+                const container = document.getElementById('registered-events-list');
+                const totalEventsEl = document.getElementById('total-events');
+                const upcomingEventsEl = document.getElementById('upcoming-events');
+
+                if (events.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-events">
+                            <i class="fas fa-calendar-times" style="font-size: 24px; margin-bottom: 16px;"></i>
+                            <p>You haven't registered for any events yet.</p>
+                            <p><a href="browse-events.html" style="color: #6b21a8; text-decoration: none;">Browse Events</a></p>
+                        </div>
+                    `;
+                    totalEventsEl.textContent = '0';
+                    upcomingEventsEl.textContent = '0';
+                    return;
+                }
+
+                const now = new Date();
+                const upcomingEvents = events.filter(event => new Date(event.date) > now);
+
+                totalEventsEl.textContent = events.length;
+                upcomingEventsEl.textContent = upcomingEvents.length;
+
+                container.innerHTML = events.map(event => {
+                    const eventDate = new Date(event.date);
+                    const isUpcoming = eventDate > now;
+                    const statusClass = `status-${event.status.toLowerCase()}`;
+
+                    return `
+                        <div class="registered-event">
+                            <div class="event-image" style="background-image: url('${event.poster || event.image_url || '/uploads/default-event.jpg'}');"></div>
+                            <div class="event-details">
+                                <div class="event-title">${event.eventName || event.title}</div>
+                                <div class="event-date">
+                                    <i class="fas fa-calendar"></i> ${eventDate.toLocaleDateString()} at ${eventDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                </div>
+                                <div class="event-date">
+                                    <i class="fas fa-map-marker-alt"></i> ${event.venue || event.location}
+                                </div>
+                                <span class="event-status ${statusClass}">${event.status}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    </script>
+</body>
+</html>

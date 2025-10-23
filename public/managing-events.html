@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage My Events - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .manage-section {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        .manage-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .manage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .manage-header h2 {
+            color: #334155;
+            font-size: 32px;
+        }
+        .create-new-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .create-new-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .event-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .event-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .event-info {
+            margin-bottom: 16px;
+        }
+        .event-info p {
+            margin: 4px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .event-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            color: #64748b;
+        }
+        .event-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .edit-btn {
+            background-color: #2563eb;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .view-btn {
+            background-color: #10b981;
+            color: white;
+        }
+        .view-btn:hover {
+            background-color: #059669;
+        }
+        .delete-btn {
+            background-color: #dc2626;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #b91c1c;
+        }
+        .no-events {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+        .no-events i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        /* Registration Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #6b21a8 0%, #8b5cf6 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .close:hover {
+            transform: scale(1.1);
+        }
+        
+        .modal-body {
+            padding: 24px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .registration-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #6b21a8;
+            display: block;
+        }
+        
+        .stat-card .label {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .registrations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .registrations-table th {
+            background-color: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .registrations-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .registrations-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-registered {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-waitlisted {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .no-registrations {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        
+        .view-registrations-btn {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        
+        .view-registrations-btn:hover {
+            background-color: #7c3aed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+                <a href="login.html" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="manage-section">
+        <div class="manage-container">
+            <div class="manage-header">
+                <h2>Manage My Events</h2>
+                <a href="create-event.html" class="create-new-btn">
+                    <i class="fas fa-plus"></i> Create New Event
+                </a>
+            </div>
+
+            <div id="events-container" class="events-grid">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Registrations Modal -->
+    <div id="registrationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalEventTitle">Event Registrations</h3>
+                <span class="close" onclick="closeRegistrationsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="registration-stats" id="registrationStats">
+                    <!-- Stats will be loaded here -->
+                </div>
+                <div id="registrationsContent">
+                    <!-- Registrations will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const eventsContainer = document.getElementById('events-container');
+
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login to manage your events');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Show logout button
+            if (logoutBtn && loginBtn) {
+                logoutBtn.style.display = 'inline-flex';
+                loginBtn.style.display = 'none';
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    window.location.href = 'index.html';
+                });
+            }
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            // Dropdown menu toggle for mobile
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            async function fetchMyEvents() {
+                try {
+                    // First verify the user
+                    const verifyResponse = await fetch('http://localhost:5000/api/auth/verify', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!verifyResponse.ok) {
+                        throw new Error('Authentication failed');
+                    }
+
+                    const userData = await verifyResponse.json();
+
+                    // For now, we'll fetch all events and filter client-side
+                    // In a production app, you'd want a dedicated endpoint for user's events
+                    const eventsResponse = await fetch('http://localhost:5000/api/events', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!eventsResponse.ok) {
+                        throw new Error('Failed to fetch events');
+                    }
+
+                    const allEvents = await eventsResponse.json();
+
+                    // Filter events created by current user
+                    const myEvents = allEvents.filter(event => event.created_by === userData.user.id);
+
+                    // Fetch registration counts for each event
+                    for (let event of myEvents) {
+                        try {
+                            const regResponse = await fetch(`http://localhost:5000/api/events/${event.id}/registrations`, {
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (regResponse.ok) {
+                                const regData = await regResponse.json();
+                                event.registration_count = regData.registrations.length;
+                                event.registrations = regData.registrations;
+                            } else {
+                                event.registration_count = 0;
+                            }
+                        } catch (e) {
+                            event.registration_count = 0;
+                        }
+                    }
+
+                    renderEvents(myEvents);
+
+                } catch (error) {
+                    console.error('Error fetching events:', error);
+                    eventsContainer.innerHTML = `
+                        <div class="no-events">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>Unable to load events</h3>
+                            <p>Please try again later or contact support if the problem persists.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            function renderEvents(events) {
+                if (events.length === 0) {
+                    eventsContainer.innerHTML = `
+                        <div class="no-events">
+                            <i class="fas fa-calendar-plus"></i>
+                            <h3>No events yet</h3>
+                            <p>You haven't created any events. <a href="create-event.html">Create your first event</a> to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                eventsContainer.innerHTML = events.map(event => {
+                    const statusClass = event.approved ? 'status-approved' : 'status-pending';
+                    const statusText = event.approved ? 'Approved' : 'Pending';
+                    const registrationCount = event.registration_count || 0;
+
+                    return `
+                        <div class="event-card">
+                            <div class="event-header">
+                                <div>
+                                    <h3 class="event-title">${event.eventName || event.title}</h3>
+                                    <span class="event-status ${statusClass}">${statusText}</span>
+                                </div>
+                            </div>
+
+                            <div class="event-info">
+                                <p><strong>Date:</strong> ${event.date ? new Date(event.date).toLocaleDateString() : 'TBD'}</p>
+                                <p><strong>Venue:</strong> ${event.venue || event.location || 'TBD'}</p>
+                                <p><strong>Type:</strong> ${event.eventType || 'General'}</p>
+                            </div>
+
+                            <div class="event-stats">
+                                <span class="stat">
+                                    <i class="fas fa-users"></i>
+                                    ${registrationCount} registered
+                                </span>
+                                <span class="stat">
+                                    <i class="fas fa-clock"></i>
+                                    ${event.timing || 'TBD'}
+                                </span>
+                            </div>
+
+                            <div class="event-actions">
+                                <button class="action-btn view-btn" onclick="viewEvent(${event.id})">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="action-btn view-registrations-btn" onclick="viewRegistrations(${event.id}, '${(event.eventName || event.title).replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-users"></i> Registrations (${registrationCount})
+                                </button>
+                                <button class="action-btn edit-btn" onclick="editEvent(${event.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteEvent(${event.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Global functions for event actions
+            window.viewEvent = function(eventId) {
+                window.location.href = `event-details.html?id=${eventId}`;
+            };
+
+            window.editEvent = function(eventId) {
+                window.location.href = `edit-event.html?id=${eventId}`;
+            };
+
+            // View registrations in modal
+            window.viewRegistrations = async function(eventId, eventTitle) {
+                const modal = document.getElementById('registrationsModal');
+                const modalTitle = document.getElementById('modalEventTitle');
+                const statsContainer = document.getElementById('registrationStats');
+                const contentContainer = document.getElementById('registrationsContent');
+
+                modalTitle.textContent = `Registrations - ${eventTitle}`;
+                contentContainer.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading registrations...</p>';
+                modal.style.display = 'block';
+
+                try {
+                    const response = await fetch(`http://localhost:5000/api/events/${eventId}/registrations`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch registrations');
+                    }
+
+                    const data = await response.json();
+                    const registrations = data.registrations || [];
+
+                    // Calculate stats
+                    const totalRegistrations = registrations.length;
+                    const registeredCount = registrations.filter(r => r.status === 'registered').length;
+                    const waitlistedCount = registrations.filter(r => r.status === 'waitlisted').length;
+                    const cancelledCount = registrations.filter(r => r.status === 'cancelled').length;
+
+                    // Display stats
+                    statsContainer.innerHTML = `
+                        <div class="stat-card">
+                            <span class="number">${totalRegistrations}</span>
+                            <span class="label">Total</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="number">${registeredCount}</span>
+                            <span class="label">Registered</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="number">${waitlistedCount}</span>
+                            <span class="label">Waitlisted</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="number">${cancelledCount}</span>
+                            <span class="label">Cancelled</span>
+                        </div>
+                    `;
+
+                    // Display registrations table
+                    if (registrations.length === 0) {
+                        contentContainer.innerHTML = `
+                            <div class="no-registrations">
+                                <i class="fas fa-users" style="font-size: 48px; color: #cbd5e1;"></i>
+                                <h3>No registrations yet</h3>
+                                <p>No one has registered for this event yet.</p>
+                            </div>
+                        `;
+                    } else {
+                        contentContainer.innerHTML = `
+                            <table class="registrations-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Organization</th>
+                                        <th>Status</th>
+                                        <th>Registered</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${registrations.map(reg => `
+                                        <tr>
+                                            <td>${reg.first_name} ${reg.last_name}</td>
+                                            <td>${reg.email}</td>
+                                            <td>${reg.phone || 'N/A'}</td>
+                                            <td>${reg.organization || 'N/A'}</td>
+                                            <td><span class="status-badge status-${reg.status}">${reg.status}</span></td>
+                                            <td>${new Date(reg.registered_at).toLocaleDateString()}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching registrations:', error);
+                    contentContainer.innerHTML = `
+                        <div class="no-registrations">
+                            <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #dc2626;"></i>
+                            <h3>Error loading registrations</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                }
+            };
+
+            // Close modal
+            window.closeRegistrationsModal = function() {
+                document.getElementById('registrationsModal').style.display = 'none';
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('registrationsModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
+            window.deleteEvent = async function(eventId) {
+                if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to delete event');
+                    }
+
+                    // Refresh the events list
+                    fetchMyEvents();
+                    alert('Event deleted successfully');
+
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    alert('Failed to delete event: ' + error.message);
+                }
+            };
+
+            // Load events on page load
+            fetchMyEvents();
+        });
+    </script>
+</body>
+</html>

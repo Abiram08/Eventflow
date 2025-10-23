@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 70px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+        .logo:hover {
+            color: #8b5cf6;
+        }
+        .logo-icon {
+            font-size: 24px;
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 20px;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 12px;
+            align-items: center;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #6b21a8;
+            background-color: #f3e8ff;
+            font-weight: 600;
+        }
+        .nav-link i {
+            font-size: 16px;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 220px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+        .dropdown-item {
+            padding: 10px 16px;
+            display: block;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .create-btn,
+        .login-btn {
+            background-color: #6b21a8;
+            color: white;
+        }
+        .create-btn:hover,
+        .login-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+        .logout-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+        .logout-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
+        .nav-menu.active {
+            animation: slideIn 0.3s ease forwards;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .event-details {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            flex: 1;
+        }
+        .event-container {
+            background: white;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .event-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .event-container h1 {
+            color: #334155;
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        .event-container p {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        .event-container p strong {
+            color: #6b21a8;
+        }
+        .register-btn {
+            background-color: #16a34a;
+            color: white;
+            margin-top: 20px;
+            display: inline-flex;
+        }
+        .register-btn:hover {
+            background-color: #15803d;
+            transform: translateY(-1px);
+        }
+        .register-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .status-registered {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status-waitlisted {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        .status-pending {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .capacity-warning {
+            color: #ea580c;
+            font-weight: 600;
+        }
+        .capacity-full {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .footer {
+            background-color: white;
+            padding: 80px 24px 40px;
+            margin-top: auto;
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        .footer-logo-section {
+            flex: 0 0 300px;
+        }
+        .footer-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .footer-logo-icon {
+            font-size: 24px;
+            color: #6b21a8;
+        }
+        .footer-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+        }
+        .footer-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .footer-nav {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+        }
+        .footer-nav-column {
+            flex: 1;
+            min-width: 160px;
+        }
+        .footer-nav-title {
+            color: #334155;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer-nav-list {
+            list-style: none;
+        }
+        .footer-nav-item {
+            margin-bottom: 12px;
+        }
+        .footer-nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        .footer-nav-link:hover {
+            color: #6b21a8;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+        .footer-social-link {
+            color: #64748b;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+        .footer-social-link:hover {
+            color: #6b21a8;
+            transform: translateY(-2px);
+        }
+        .footer-legal {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .footer-legal-link {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer-legal-link:hover {
+            color: #6b21a8;
+        }
+        @media screen and (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .nav-menu.active {
+                display: flex;
+            }
+            .nav-item {
+                width: 100%;
+            }
+            .nav-link {
+                padding: 12px 16px;
+            }
+            .dropdown-menu {
+                position: static;
+                width: 100%;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background-color: #f8fafc;
+                margin-top: 4px;
+                display: none;
+            }
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+            .user-menu {
+                gap: 12px;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .event-container {
+                padding: 15px;
+            }
+            .event-container h1 {
+                font-size: 28px;
+            }
+            .footer-top {
+                gap: 40px;
+            }
+            .footer-logo-section {
+                flex: 0 0 100%;
+            }
+            .footer-nav {
+                gap: 40px;
+            }
+            .footer-nav-column {
+                flex: 0 0 calc(50% - 20px);
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+            .footer-legal {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+        @media screen and (max-width: 576px) {
+            .nav-container {
+                padding: 0 16px;
+            }
+            .logo span {
+                display: none;
+            }
+            .create-btn span,
+            .login-btn span,
+            .logout-btn span {
+                display: none;
+            }
+            .event-container h1 {
+                font-size: 24px;
+            }
+            .event-container p {
+                font-size: 14px;
+            }
+            .footer-nav-column {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link active">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-menu">
+                <a href="create-event.html" class="btn create-btn" id="create-event-btn" style="display: none;">
+                    <i class="fas fa-plus"></i> <span>Create Event</span>
+                </a>
+                <a href="my-registrations.html" class="btn" id="my-registrations-btn" style="display: none; background: #6b21a8; color: white;">
+                    <i class="fas fa-ticket-alt"></i> <span>My Registrations</span>
+                </a>
+                <a href="login.html" class="btn login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> <span>Login</span>
+                </a>
+                <a href="#" class="btn logout-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="event-details" id="event-details">
+        <div class="event-container">
+            <img id="event-poster" src="" alt="Event Poster">
+            <h1 id="event-title"></h1>
+            <p><strong>Venue:</strong> <span id="event-venue"></span></p>
+            <p><strong>Date:</strong> <span id="event-date"></span></p>
+            <p><strong>Time:</strong> <span id="event-time"></span></p>
+            <p><strong>Department:</strong> <span id="event-department"></span></p>
+            <p><strong>Club:</strong> <span id="event-club"></span></p>
+            <p><strong>Event Type:</strong> <span id="event-type"></span></p>
+            <p><strong>List of Events:</strong> <span id="event-list"></span></p>
+            <p><strong>Contact Email:</strong> <span id="event-contact"></span></p>
+            <p><strong>Description:</strong> <span id="event-description"></span></p>
+            
+            <!-- Registration Information -->
+            <div class="registration-info" id="registration-info" style="margin-top: 20px; padding: 20px; background-color: #f8fafc; border-radius: 8px; display: none;">
+                <h3 style="color: #6b21a8; margin-bottom: 16px;">Registration Information</h3>
+                <div class="reg-stats" id="reg-stats">
+                    <p><strong>Capacity:</strong> <span id="capacity-info">Unlimited</span></p>
+                    <p><strong>Available Spots:</strong> <span id="available-spots">N/A</span></p>
+                    <p><strong>Registration Deadline:</strong> <span id="reg-deadline">No deadline</span></p>
+                    <p><strong>Registration Fee:</strong> <span id="reg-fee">Free</span></p>
+                </div>
+                <div class="user-registration-status" id="user-reg-status" style="margin-top: 16px; display: none;">
+                    <div class="status-badge" id="status-badge"></div>
+                </div>
+            </div>
+            
+            <!-- Registration Actions -->
+            <div class="registration-actions" id="registration-actions" style="margin-top: 20px;">
+                <button id="register-btn" class="btn register-btn" style="display: none;">
+                    <i class="fas fa-user-plus"></i> <span id="register-btn-text">Register Now</span>
+                </button>
+                <button id="cancel-registration-btn" class="btn" style="display: none; background-color: #ef4444;">
+                    <i class="fas fa-times"></i> Cancel Registration
+                </button>
+                <a href="#" id="external-register-btn" class="btn register-btn" target="_blank" style="display: none;">
+                    <i class="fas fa-external-link-alt"></i> Register via External Form
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo-section">
+                    <a href="index.html" class="footer-logo">
+                        <i class="fas fa-bolt footer-logo-icon"></i>
+                        <span class="footer-logo-text">EventFlow</span>
+                    </a>
+                    <p class="footer-description">
+                        The modern platform for discovering, creating, and managing events that connect communities and bring people together.
+                    </p>
+                </div>
+
+                <div class="footer-nav">
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Discover</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="browse-events.html" class="footer-nav-link">All Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                            <li class="footer-nav-item">
+                                <a href="calendar-view.html" class="footer-nav-link">Calendar</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Organize</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="create-event.html" class="footer-nav-link">Create Event</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="managing-events.html" class="footer-nav-link">Manage Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="pricing.html" class="footer-nav-link">Pricing</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Company</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="about.html" class="footer-nav-link">About Us</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="contact.html" class="footer-nav-link">Contact</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="careers.html" class="footer-nav-link">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+
+                <div class="footer-legal">
+                    <span>© 2025 EventFlow. All rights reserved.</span>
+                    <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            // Show test mode banner if enabled
+            if (EventFlowConfig.USE_PAYMENT_TEST_MODE) {
+                const testModeBanner = document.createElement('div');
+                testModeBanner.style.cssText = `
+                    position: fixed; top: 70px; left: 0; right: 0; z-index: 999;
+                    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+                    color: #78350f; padding: 8px 16px; text-align: center;
+                    font-size: 14px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                `;
+                testModeBanner.innerHTML = `
+                    <i class="fas fa-flask" style="margin-right: 8px;"></i>
+                    TEST MODE ACTIVE - Payments are simulated
+                    <i class="fas fa-flask" style="margin-left: 8px;"></i>
+                `;
+                document.body.appendChild(testModeBanner);
+                
+                // Adjust main content padding to account for banner
+                const eventDetails = document.querySelector('.event-details');
+                if (eventDetails) {
+                    eventDetails.style.paddingTop = '160px';
+                }
+            }
+
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const createEventBtn = document.getElementById('create-event-btn');
+            const myRegistrationsBtn = document.getElementById('my-registrations-btn');
+
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+                myRegistrationsBtn.style.display = 'inline-flex';
+                
+                // Check user role for create event button
+                checkUserRole(token);
+            }
+
+            // Logout functionality
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                });
+            }
+
+            async function checkUserRole(token) {
+                try {
+                    const response = await fetch('http://localhost:5000/api/auth/verify', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.user.user_type === 'organizer' || data.user.is_admin) {
+                            createEventBtn.style.display = 'inline-flex';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking user role:', error);
+                }
+            }
+
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath || (href === 'events.html' && currentPath === 'event-details.html')) {
+                    link.classList.add('active');
+                }
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const eventId = params.get("id");
+            const eventDetailsSection = document.getElementById("event-details");
+
+            if (!eventId) {
+                eventDetailsSection.innerHTML = "<p>Event not found. Please provide a valid event ID.</p>";
+                console.error('No eventId provided in URL');
+                return;
+            }
+
+            const fetchUrl = `http://localhost:5000/api/events/${eventId}`;
+            console.log('Fetching from:', fetchUrl);
+
+            try {
+                const response = await fetch(fetchUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const event = await response.json();
+                console.log('Fetched event data:', event);
+
+                // Populate event details
+                document.getElementById("event-title").textContent = event.eventName || 'Unnamed Event';
+                document.getElementById("event-venue").textContent = event.venue || 'Not specified';
+                document.getElementById("event-date").textContent = new Date(event.date).toLocaleDateString();
+                document.getElementById("event-time").textContent = event.timing || 'Not specified';
+                document.getElementById("event-department").textContent = event.department || 'Not specified';
+                document.getElementById("event-club").textContent = event.clubName || 'Not specified';
+                document.getElementById("event-type").textContent = event.eventType || 'Not specified';
+                document.getElementById("event-list").textContent = event.eventList || 'Not specified';
+                document.getElementById("event-contact").textContent = event.contact || 'Not specified';
+                document.getElementById("event-description").textContent = event.description || 'No description available';
+                document.getElementById("event-poster").src = event.poster || 'default-event.jpg';
+
+                // Show registration information
+                const registrationInfo = document.getElementById("registration-info");
+                registrationInfo.style.display = 'block';
+                
+                // Update capacity info
+                const capacityInfo = document.getElementById("capacity-info");
+                const availableSpots = document.getElementById("available-spots");
+                
+                if (event.max_capacity > 0) {
+                    capacityInfo.textContent = event.max_capacity;
+                    const spotsLeft = event.available_spots || 0;
+                    availableSpots.textContent = spotsLeft;
+                    
+                    if (spotsLeft === 0) {
+                        availableSpots.classList.add('capacity-full');
+                        availableSpots.textContent += ' (FULL)';
+                    } else if (spotsLeft <= 5) {
+                        availableSpots.classList.add('capacity-warning');
+                        availableSpots.textContent += ' (Limited)';
+                    }
+                } else {
+                    capacityInfo.textContent = 'Unlimited';
+                    availableSpots.textContent = 'No limit';
+                }
+                
+                // Update deadline and fee
+                const regDeadline = document.getElementById("reg-deadline");
+                if (event.registration_deadline) {
+                    regDeadline.textContent = new Date(event.registration_deadline).toLocaleDateString();
+                } else {
+                    regDeadline.textContent = 'No deadline';
+                }
+                
+                const regFee = document.getElementById("reg-fee");
+                if (event.registration_fee > 0) {
+                    regFee.textContent = `₹${Number(event.registration_fee).toFixed(2)}`;
+                } else {
+                    regFee.textContent = 'Free';
+                }
+                
+                // Handle user registration status
+                const token = localStorage.getItem('token');
+                if (token && event.user_registration) {
+                    const userRegStatus = document.getElementById("user-reg-status");
+                    const statusBadge = document.getElementById("status-badge");
+                    
+                    userRegStatus.style.display = 'block';
+                    const status = event.user_registration.status;
+                    
+                    let statusText = '';
+                    let statusClass = '';
+                    
+                    switch (status) {
+                        case 'registered':
+                            statusText = '✅ You are registered for this event';
+                            statusClass = 'status-registered';
+                            break;
+                        case 'waitlisted':
+                            statusText = '⏳ You are on the waitlist';
+                            statusClass = 'status-waitlisted';
+                            break;
+                        case 'pending_approval':
+                            statusText = '🕒 Your registration is pending approval';
+                            statusClass = 'status-pending';
+                            break;
+                        case 'cancelled':
+                            statusText = '❌ Your registration was cancelled';
+                            statusClass = 'status-cancelled';
+                            break;
+                    }
+                    
+                    statusBadge.textContent = statusText;
+                    statusBadge.className = `status-badge ${statusClass}`;
+                    
+                    // Show cancel button if applicable
+                    if (['registered', 'waitlisted', 'pending_approval'].includes(status)) {
+                        document.getElementById("cancel-registration-btn").style.display = 'inline-flex';
+                    }
+                }
+                
+                // Handle registration buttons
+                const registerBtn = document.getElementById("register-btn");
+                const externalRegisterBtn = document.getElementById("external-register-btn");
+                const cancelBtn = document.getElementById("cancel-registration-btn");
+                const registerBtnText = document.getElementById("register-btn-text");
+                
+                if (!token) {
+                    // Not logged in
+                    registerBtn.textContent = '🔒 Login to Register';
+                    registerBtn.style.display = 'inline-flex';
+                    registerBtn.onclick = () => window.location.href = 'login.html';
+                } else if (event.user_registration) {
+                    // Already registered - buttons handled above
+                } else if (event.external_registration_url) {
+                    // External registration
+                    externalRegisterBtn.href = event.external_registration_url;
+                    externalRegisterBtn.style.display = 'inline-flex';
+                } else if (event.can_register) {
+                    // Can register internally
+                    registerBtn.style.display = 'inline-flex';
+                    
+                    if (event.is_full && event.allow_waitlist) {
+                        registerBtnText.textContent = 'Join Waitlist';
+                    } else {
+                        registerBtnText.textContent = 'Register Now';
+                    }
+                    
+                    registerBtn.onclick = () => showRegistrationModal(event);
+                } else if (event.registration_closed) {
+                    registerBtn.textContent = '⏰ Registration Closed';
+                    registerBtn.style.display = 'inline-flex';
+                    registerBtn.disabled = true;
+                } else {
+                    registerBtn.textContent = '🚫 Registration Full';
+                    registerBtn.style.display = 'inline-flex';
+                    registerBtn.disabled = true;
+                }
+                
+                // Cancel registration handler
+                cancelBtn.onclick = () => cancelRegistration(event.id);
+
+                document.getElementById("event-poster").onerror = function() {
+                    this.src = 'default-event.jpg';
+                };
+            } catch (error) {
+                console.error("Error fetching event details:", error);
+                eventDetailsSection.innerHTML = `<p>Failed to load event details: ${error.message}. Please ensure the backend is running.</p>`;
+            }
+        });
+        
+        // Registration modal and functions
+        let razorpayScriptPromise = null;
+        // Use centralized configuration
+        const USE_TEST_MODE = EventFlowConfig.USE_PAYMENT_TEST_MODE;
+        const API_BASE_URL = EventFlowConfig.API_BASE_URL;
+
+        function loadRazorpayScript() {
+            if (!razorpayScriptPromise) {
+                razorpayScriptPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error('Failed to load the Razorpay SDK. Please check your network connection.'));
+                    document.body.appendChild(script);
+                });
+            }
+            return razorpayScriptPromise;
+        }
+
+        function showRegistrationModal(event) {
+            const modal = createRegistrationModal(event);
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }
+
+        function createRegistrationModal(event) {
+            const hasFee = Boolean(event.payment_enabled && (event.registration_fee || 0) > 0);
+            const feeAmount = Number(event.registration_fee || 0).toFixed(2);
+            const primaryCtaLabel = hasFee ? `Pay ₹${feeAmount}` : 'Register';
+            const feeMessage = hasFee
+                ? `<p style="color: #6b21a8; font-weight: 600;">Registration Fee: ₹${feeAmount}</p>`
+                : `<p style="color: #22c55e; font-weight: 600;">This event is free to attend</p>`;
+            const infoMessage = hasFee
+                ? `<p style="font-size: 14px; color: #64748b; text-align: center;">You'll be redirected to Razorpay to complete a secure payment.</p>`
+                : '';
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); z-index: 10000;
+                display: none; align-items: center; justify-content: center;
+            `;
+            modal.innerHTML = `
+                <div class="modal-content" style="
+                    background: white; padding: 32px; border-radius: 12px;
+                    max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+                ">
+                    <div class="modal-header" style="margin-bottom: 24px;">
+                        <h2 style="color: #6b21a8; margin-bottom: 8px;">Register for Event</h2>
+                        <h3 style="color: #334155; font-size: 20px; margin-bottom: 16px;">${event.eventName || event.title}</h3>
+                        ${feeMessage}
+                    </div>
+                    <form id="registration-form" style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">First Name *</label>
+                                <input type="text" name="first_name" required style="
+                                    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                    border-radius: 8px; font-size: 16px;
+                                ">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Last Name *</label>
+                                <input type="text" name="last_name" required style="
+                                    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                    border-radius: 8px; font-size: 16px;
+                                ">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email *</label>
+                            <input type="email" name="email" required style="
+                                width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                border-radius: 8px; font-size: 16px;
+                            ">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Phone</label>
+                            <input type="tel" name="phone" style="
+                                width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                border-radius: 8px; font-size: 16px;
+                            ">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Department *</label>
+                                <input type="text" name="department" required style="
+                                    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                    border-radius: 8px; font-size: 16px;
+                                ">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Year *</label>
+                                <select name="year" required style="
+                                    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                    border-radius: 8px; font-size: 16px;
+                                ">
+                                    <option value="">Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                    <option value="5">5th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">College *</label>
+                            <input type="text" name="college" required style="
+                                width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                                border-radius: 8px; font-size: 16px;
+                            ">
+                        </div>
+                        <div id="event-selection-container">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Select Events to Participate *</label>
+                            <div id="event-checkboxes" style="
+                                display: grid; grid-template-columns: 1fr;
+                                gap: 10px; padding: 12px; border: 1px solid #d1d5db;
+                                border-radius: 8px; background-color: #f9fafb;
+                                max-height: 200px; overflow-y: auto;
+                            "></div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 24px;">
+                            <button type="submit" style="
+                                flex: 1; padding: 12px 24px; background: #16a34a;
+                                color: white; border: none; border-radius: 8px;
+                                font-size: 16px; font-weight: 600; cursor: pointer;
+                            ">${primaryCtaLabel}</button>
+                            <button type="button" class="cancel-modal-btn" style="
+                                flex: 1; padding: 12px 24px; background: #6b7280;
+                                color: white; border: none; border-radius: 8px;
+                                font-size: 16px; font-weight: 600; cursor: pointer;
+                            ">Cancel</button>
+                        </div>
+                        ${infoMessage}
+                    </form>
+                </div>
+            `;
+
+            const form = modal.querySelector('#registration-form');
+            const cancelBtn = modal.querySelector('.cancel-modal-btn');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            // Populate event checkboxes if eventList exists
+            const eventCheckboxesContainer = modal.querySelector('#event-checkboxes');
+            const eventList = event.eventList || event.event_list || '';
+            if (eventList && eventList.trim()) {
+                const events = eventList.split(',').map(e => e.trim()).filter(e => e);
+                if (events.length > 0) {
+                    events.forEach(eventName => {
+                        const label = document.createElement('label');
+                        label.style.cssText = 'display: flex; align-items: center; gap: 8px; cursor: pointer;';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'participating_events';
+                        checkbox.value = eventName;
+                        checkbox.style.cssText = 'width: 18px; height: 18px; cursor: pointer;';
+                        
+                        const span = document.createElement('span');
+                        span.textContent = eventName;
+                        
+                        label.appendChild(checkbox);
+                        label.appendChild(span);
+                        eventCheckboxesContainer.appendChild(label);
+                    });
+                } else {
+                    // Hide the container if no events
+                    modal.querySelector('#event-selection-container').style.display = 'none';
+                }
+            } else {
+                // Hide the container if no events
+                modal.querySelector('#event-selection-container').style.display = 'none';
+            }
+
+            cancelBtn.addEventListener('click', () => modal.remove());
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const registrationData = {};
+                formData.forEach((value, key) => {
+                    registrationData[key] = value;
+                });
+
+                // Collect selected participating events
+                const participatingEventCheckboxes = modal.querySelectorAll('input[name="participating_events"]:checked');
+                const participatingEvents = Array.from(participatingEventCheckboxes).map(cb => cb.value);
+                registrationData.participating_events = participatingEvents.join(', ');
+
+                submitButton.disabled = true;
+                submitButton.textContent = hasFee ? 'Opening Razorpay...' : 'Registering...';
+
+                try {
+                    if (hasFee) {
+                        await startRazorpayCheckout(event, registrationData, submitButton);
+                    } else {
+                        await submitRegistration(event, registrationData);
+                    }
+                } catch (error) {
+                    alert(error.message);
+                    submitButton.disabled = false;
+                    submitButton.textContent = primaryCtaLabel;
+                }
+            });
+
+            return modal;
+        }
+
+        async function startRazorpayCheckout(event, registrationData, submitButton) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                submitButton.disabled = false;
+                submitButton.textContent = `Pay ₹${Number(event.registration_fee || 0).toFixed(2)}`;
+                throw new Error('Please login again to continue with the payment.');
+            }
+
+            // TEST MODE: Simulate payment with animation
+            if (USE_TEST_MODE) {
+                return await simulatePaymentWithAnimation(event, registrationData, submitButton);
+            }
+
+            // PRODUCTION MODE: Use real Razorpay
+            await loadRazorpayScript();
+
+            submitButton.textContent = 'Preparing payment...';
+
+            const response = await fetch('http://localhost:5000/api/payments/create-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ event_id: event.id })
+            });
+
+            const orderData = await response.json();
+
+            if (!response.ok) {
+                submitButton.disabled = false;
+                submitButton.textContent = `Pay ₹${Number(event.registration_fee || 0).toFixed(2)}`;
+                throw new Error(orderData.message || 'Failed to initiate payment.');
+            }
+
+            return new Promise((resolve, reject) => {
+                const resetButtonState = () => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = `Pay ₹${Number(event.registration_fee || 0).toFixed(2)}`;
+                };
+
+                const options = {
+                    key: orderData.key_id,
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: 'EventFlow',
+                    description: `Registration for ${event.eventName || event.title}`,
+                    order_id: orderData.order_id,
+                    prefill: {
+                        name: `${registrationData.first_name || ''} ${registrationData.last_name || ''}`.trim(),
+                        email: registrationData.email || '',
+                        contact: registrationData.phone || ''
+                    },
+                    notes: {
+                        event_id: String(event.id)
+                    },
+                    theme: {
+                        color: '#6b21a8'
+                    },
+                    handler: async function (paymentResponse) {
+                        submitButton.textContent = 'Finalizing registration...';
+                        try {
+                            await submitRegistration(event, registrationData, paymentResponse);
+                            resolve();
+                        } catch (error) {
+                            resetButtonState();
+                            reject(error);
+                        }
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            resetButtonState();
+                            reject(new Error('Payment was cancelled.'));
+                        }
+                    }
+                };
+
+                const razorpayInstance = new window.Razorpay(options);
+                razorpayInstance.on('payment.failed', function (response) {
+                    const description = response.error && response.error.description
+                        ? response.error.description
+                        : 'Payment failed. Please try again.';
+                    resetButtonState();
+                    reject(new Error(description));
+                });
+
+                razorpayInstance.open();
+            });
+        }
+
+        // Simulated Payment Animation for Test Mode
+        async function simulatePaymentWithAnimation(event, registrationData, submitButton) {
+            return new Promise((resolve, reject) => {
+                // Create payment animation modal
+                const paymentModal = document.createElement('div');
+                paymentModal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0, 0, 0, 0.8); z-index: 20000;
+                    display: flex; align-items: center; justify-content: center;
+                `;
+                
+                paymentModal.innerHTML = `
+                    <div style="
+                        background: white; padding: 48px; border-radius: 16px;
+                        text-align: center; max-width: 500px; width: 90%;
+                        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+                    ">
+                        <div class="payment-animation" style="margin-bottom: 24px;">
+                            <!-- Processing Stage -->
+                            <div id="processing-stage">
+                                <div style="
+                                    width: 80px; height: 80px; border: 6px solid #f3f4f6;
+                                    border-top-color: #6b21a8; border-radius: 50%;
+                                    animation: spin 1s linear infinite; margin: 0 auto 20px;
+                                "></div>
+                                <h3 style="color: #6b21a8; margin-bottom: 12px;">Processing Payment</h3>
+                                <p style="color: #64748b; font-size: 14px;">Amount: ₹${Number(event.registration_fee || 0).toFixed(2)}</p>
+                                <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">TEST MODE - No real payment</p>
+                            </div>
+                            
+                            <!-- Success Stage (hidden initially) -->
+                            <div id="success-stage" style="display: none;">
+                                <div style="
+                                    width: 80px; height: 80px; background: #16a34a;
+                                    border-radius: 50%; margin: 0 auto 20px;
+                                    display: flex; align-items: center; justify-content: center;
+                                    animation: scaleIn 0.5s ease;
+                                ">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <h3 style="color: #16a34a; margin-bottom: 12px;">Payment Successful!</h3>
+                                <p style="color: #64748b; font-size: 14px;">Transaction ID: TEST_${Date.now()}</p>
+                                <p style="color: #64748b; font-size: 14px; margin-top: 8px;">Completing registration...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add animation styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    @keyframes scaleIn {
+                        0% { transform: scale(0); }
+                        50% { transform: scale(1.1); }
+                        100% { transform: scale(1); }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(paymentModal);
+                
+                // Get animation durations from config
+                const processingDuration = EventFlowConfig.PAYMENT_ANIMATION.processingDuration;
+                const successDuration = EventFlowConfig.PAYMENT_ANIMATION.successDuration;
+                
+                // Simulate payment processing
+                setTimeout(() => {
+                    // Show success stage
+                    paymentModal.querySelector('#processing-stage').style.display = 'none';
+                    paymentModal.querySelector('#success-stage').style.display = 'block';
+                    
+                    // Wait then complete registration
+                    setTimeout(async () => {
+                        try {
+                            // Create mock payment response for test mode
+                            const mockPaymentResponse = {
+                                razorpay_order_id: `order_test_${Date.now()}`,
+                                razorpay_payment_id: `pay_test_${Date.now()}`,
+                                razorpay_signature: `test_signature_${Date.now()}`
+                            };
+                            
+                            await submitRegistration(event, registrationData, mockPaymentResponse);
+                            paymentModal.remove();
+                            style.remove();
+                            resolve();
+                        } catch (error) {
+                            paymentModal.remove();
+                            style.remove();
+                            reject(error);
+                        }
+                    }, successDuration);
+                }, processingDuration);
+                
+                // Allow cancellation by clicking outside (optional)
+                paymentModal.addEventListener('click', (e) => {
+                    if (e.target === paymentModal) {
+                        paymentModal.remove();
+                        style.remove();
+                        submitButton.disabled = false;
+                        submitButton.textContent = `Pay ₹${Number(event.registration_fee || 0).toFixed(2)}`;
+                        reject(new Error('Payment cancelled by user'));
+                    }
+                });
+            });
+        }
+
+        async function submitRegistration(event, data, paymentResponse) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Please login to register for this event.');
+            }
+
+            const payload = { ...data };
+            if (paymentResponse) {
+                payload.payment = {
+                    order_id: paymentResponse.razorpay_order_id,
+                    payment_id: paymentResponse.razorpay_payment_id,
+                    signature: paymentResponse.razorpay_signature
+                };
+            }
+
+            const response = await fetch(`http://localhost:5000/api/events/${event.id}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Registration failed.');
+            }
+
+            alert('Registration successful! ' + result.message);
+            const modalOverlay = document.querySelector('.modal-overlay');
+            if (modalOverlay) {
+                modalOverlay.remove();
+            }
+            window.location.reload();
+        }
+
+        async function cancelRegistration(eventId) {
+            if (!confirm('Are you sure you want to cancel your registration?')) {
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login to manage your registrations.');
+                return;
+            }
+            
+            try {
+                // First get user's registration ID
+                const registrationsResponse = await fetch('http://localhost:5000/api/my-registrations', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (registrationsResponse.ok) {
+                    const registrations = await registrationsResponse.json();
+                    const eventRegistration = registrations.find(reg => reg.event.id === eventId);
+                    
+                    if (eventRegistration) {
+                        const response = await fetch(`http://localhost:5000/api/registrations/${eventRegistration.id}/status`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ status: 'cancelled' })
+                        });
+                        
+                        if (response.ok) {
+                            alert('Registration cancelled successfully');
+                            window.location.reload();
+                        } else {
+                            throw new Error('Failed to cancel registration');
+                        }
+                    }
+                }
+            } catch (error) {
+                alert('Error cancelling registration: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

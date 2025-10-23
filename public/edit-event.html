@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .edit-container h2 {
+            color: #334155;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        label {
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #6b21a8;
+            box-shadow: 0 0 0 2px rgba(107, 33, 168, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .submit-btn:hover {
+            background-color: #8b5cf6;
+        }
+
+        .submit-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .status-message.loading {
+            color: #64748b;
+            background-color: #f1f5f9;
+        }
+
+        .status-message.success {
+            color: #16a34a;
+            background-color: #dcfce7;
+        }
+
+        .status-message.error {
+            color: #dc2626;
+            background-color: #fee2e2;
+        }
+
+        .poster-preview {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .edit-container {
+                padding: 20px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <h2>Edit Event</h2>
+        <form id="edit-event-form">
+            <label for="eventName">Event Name</label>
+            <input type="text" id="eventName" name="eventName" required>
+
+            <label for="clubName">Club Name</label>
+            <input type="text" id="clubName" name="clubName" required>
+
+            <label for="eventType">Event Type</label>
+            <select id="eventType" name="eventType" required>
+                <option value="">Select Event Type</option>
+                <option value="Technical Events">Technical Events</option>
+                <option value="Non-Technical Events">Non-Technical Events</option>
+                <option value="Both Tech and Non-Tech">Both Tech and Non-Tech</option>
+                <option value="Hackathon">Hackathon</option>
+                <option value="Ideathon">Ideathon</option>
+                <option value="Project Presentation">Project Presentation</option>
+                <option value="Paper Presentation">Paper Presentation</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Seminar">Seminar</option>
+                <option value="Conference">Conference</option>
+                <option value="Competition">Competition</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Sports">Sports</option>
+            </select>
+
+            <label for="department">Department</label>
+            <input type="text" id="department" name="department" required>
+
+            <label for="venue">Venue</label>
+            <input type="text" id="venue" name="venue" required>
+
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="timing">Timing</label>
+            <input type="text" id="timing" name="timing" required>
+
+            <label for="registrationType">Registration Type</label>
+            <select id="registrationType" name="registrationType" required>
+                <option value="">Select Registration Type</option>
+                <option value="Online">Online</option>
+                <option value="On Spot">On Spot</option>
+                <option value="Both">Both</option>
+            </select>
+
+            <label for="eventList">Event List (Select activities included)</label>
+            <div id="eventList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Non-Tech Events" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Web Design</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Coding Challenge" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Coding Challenge</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Quiz Competition" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Tech Quiz</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Presentation" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Project Presentation</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Group Discussion" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Paper Presentation</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Workshops" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Workshops</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Panel Discussion" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Hackathon</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Networking Session" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>IPL Auction</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Demo Session" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Demo Session</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Hackathon" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Treasure Hunt</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="eventList" value="Exhibition" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Website Development</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="othersCheckbox" name="eventList" value="Others" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span>Others</span>
+                </label>
+            </div>
+            <div id="othersInputContainer" style="display: none; margin-top: 12px;">
+                <label for="othersInput" style="font-size: 14px; color: #64748b;">Specify other events (comma-separated)</label>
+                <input type="text" id="othersInput" placeholder="e.g., Dance Competition, Singing Contest" style="
+                    width: 100%; padding: 12px; border: 1px solid #d1d5db;
+                    border-radius: 8px; font-size: 16px; margin-top: 4px;
+                ">
+            </div>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label for="contact">Contact</label>
+            <input type="text" id="contact" name="contact" required>
+
+            <label for="max_capacity">Max Capacity (leave 0 for unlimited)</label>
+            <input type="number" id="max_capacity" name="max_capacity" min="0" value="0">
+
+            <!-- Payment Configuration Section -->
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #f8fafc;">
+                <h3 style="color: #6b21a8; margin-bottom: 16px; font-size: 18px;">💳 Payment Configuration</h3>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="payment_enabled" name="payment_enabled" style="width: auto;">
+                        <span style="font-weight: 600;">Enable Payment for this Event</span>
+                    </label>
+                </div>
+
+                <div id="payment-fields" style="display: none;">
+                    <label for="registration_fee">Registration Fee (₹)</label>
+                    <input type="number" id="registration_fee" name="registration_fee" min="0" step="0.01" placeholder="0.00">
+
+                    <label for="razorpay_key_id">Razorpay Key ID</label>
+                    <input type="text" id="razorpay_key_id" name="razorpay_key_id" placeholder="rzp_test_XXXXXXXXXXXXX">
+
+                    <label for="razorpay_key_secret">Razorpay Key Secret</label>
+                    <input type="password" id="razorpay_key_secret" name="razorpay_key_secret" placeholder="Your Razorpay Key Secret">
+
+                    <label for="organizer_account_id">Organizer Account ID (Optional)</label>
+                    <input type="text" id="organizer_account_id" name="organizer_account_id" placeholder="acc_XXXXXXXXXXXXX">
+
+                    <div style="background-color: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 12px; margin-top: 12px;">
+                        <p style="color: #92400e; font-size: 14px; margin: 0;">
+                            <strong>⚠️ Important:</strong> Payments will be processed through your Razorpay account.
+                            Make sure your Razorpay account is properly configured and verified.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <label for="poster">Poster (Upload New Image)</label>
+            <input type="file" id="poster" name="poster" accept="image/*">
+            <img id="poster-preview" class="poster-preview" src="" alt="Poster Preview" style="display: none;">
+
+            <button type="submit" class="submit-btn" id="submit-btn">Update Event</button>
+            <p id="status-message"></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const form = document.getElementById('edit-event-form');
+            const statusMessage = document.getElementById('status-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const posterInput = document.getElementById('poster');
+            const posterPreview = document.getElementById('poster-preview');
+
+            // Handle "Others" checkbox toggle
+            const othersCheckbox = document.getElementById('othersCheckbox');
+            const othersInputContainer = document.getElementById('othersInputContainer');
+            const othersInput = document.getElementById('othersInput');
+
+            othersCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    othersInputContainer.style.display = 'block';
+                } else {
+                    othersInputContainer.style.display = 'none';
+                    othersInput.value = '';
+                }
+            });
+
+            // Check if we're in create mode (no ID in URL)
+            const urlParams = new URLSearchParams(window.location.search);
+            let eventId = urlParams.get('id');
+
+            if (!eventId) {
+                // This is a new event, change the title and button text
+                document.querySelector('h2').textContent = 'Create New Event';
+                submitBtn.textContent = 'Create Event';
+
+                // Handle form submission for new event
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    submitBtn.disabled = true;
+                    statusMessage.textContent = 'Creating event...';
+                    statusMessage.className = 'status-message loading';
+
+                    try {
+                        const formData = new FormData();
+                        const posterFile = document.getElementById('poster').files[0];
+                        
+                        // Manually add form fields to FormData
+                        formData.append('eventName', document.getElementById('eventName').value);
+                        formData.append('clubName', document.getElementById('clubName').value);
+                        formData.append('eventType', document.getElementById('eventType').value);
+                        formData.append('department', document.getElementById('department').value);
+                        formData.append('venue', document.getElementById('venue').value);
+                        formData.append('date', document.getElementById('date').value);
+                        formData.append('timing', document.getElementById('timing').value);
+                        formData.append('registrationType', document.getElementById('registrationType').value);
+                        
+                        // Handle checkboxes for eventList
+                        const eventListCheckboxes = document.querySelectorAll('#eventList input[type="checkbox"]:checked');
+                        let selectedEvents = Array.from(eventListCheckboxes).map(checkbox => checkbox.value);
+                        
+                        // Add custom events from "Others" input if checked
+                        if (document.getElementById('othersCheckbox').checked) {
+                            const othersValue = document.getElementById('othersInput').value.trim();
+                            if (othersValue) {
+                                // Split by comma and trim each event
+                                const customEvents = othersValue.split(',').map(e => e.trim()).filter(e => e);
+                                // Remove "Others" from the list and add custom events
+                                selectedEvents = selectedEvents.filter(e => e !== 'Others');
+                                selectedEvents.push(...customEvents);
+                            } else {
+                                // Remove "Others" if no custom events entered
+                                selectedEvents = selectedEvents.filter(e => e !== 'Others');
+                            }
+                        }
+                        
+                        formData.append('eventList', selectedEvents.join(', '));
+                        
+                        formData.append('description', document.getElementById('description').value);
+                        formData.append('contact', document.getElementById('contact').value);
+                        formData.append('max_capacity', document.getElementById('max_capacity').value);
+
+                        // Add payment fields
+                        formData.append('payment_enabled', document.getElementById('payment_enabled').checked);
+                        formData.append('registration_fee', document.getElementById('registration_fee').value || '0');
+                        formData.append('razorpay_key_id', document.getElementById('razorpay_key_id').value);
+                        formData.append('razorpay_key_secret', document.getElementById('razorpay_key_secret').value);
+                        formData.append('organizer_account_id', document.getElementById('organizer_account_id').value);
+                        
+                        // Only add the poster file if one was selected
+                        if (posterFile) {
+                            formData.append('poster', posterFile);
+                        }
+
+                        // Add authorization token
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                            throw new Error('You must be logged in to create an event');
+                        }
+
+                        const response = await fetch('http://localhost:5000/api/events', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: formData
+                        });
+
+                        // First, get the response as text
+                        const responseText = await response.text();
+                        let result;
+                        
+                        try {
+                            // Try to parse it as JSON
+                            result = JSON.parse(responseText);
+                        } catch (e) {
+                            console.error('Failed to parse response as JSON:', responseText);
+                            throw new Error('Received invalid response from server');
+                        }
+
+                        if (!response.ok) {
+                            console.error('Server error response:', result);
+                            throw new Error(result.message || `Server responded with status ${response.status}`);
+                        }
+
+                        statusMessage.textContent = 'Event created successfully!';
+                        statusMessage.className = 'status-message success';
+                        form.reset();
+
+                        // Redirect to events page after a short delay
+                        setTimeout(() => {
+                            window.location.href = 'events.html';
+                        }, 1500);
+                    } catch (error) {
+                        console.error('Error creating event:', error);
+                        let errorMessage = 'An error occurred while creating the event.';
+                        
+                        if (error.message.includes('Failed to fetch')) {
+                            errorMessage = 'Unable to connect to the server. Please check your connection.';
+                        } else if (error.message.includes('invalid response')) {
+                            errorMessage = 'Received an invalid response from the server.';
+                        } else {
+                            errorMessage = error.message || errorMessage;
+                        }
+                        
+                        statusMessage.textContent = `Error: ${errorMessage}`;
+                        statusMessage.className = 'status-message error';
+                    } finally {
+                        submitBtn.disabled = false;
+                    }
+                });
+
+            // Handle payment configuration toggle
+            const paymentEnabledCheckbox = document.getElementById('payment_enabled');
+            const paymentFields = document.getElementById('payment-fields');
+
+            paymentEnabledCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    paymentFields.style.display = 'block';
+                } else {
+                    paymentFields.style.display = 'none';
+                }
+            });
+
+            // Handle poster preview
+            posterInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        posterPreview.src = e.target.result;
+                        posterPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+                return; // Exit early for new event creation
+            }
+
+            // Existing edit event code below...
+            const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+            if (!token) {
+                alert('You must be logged in to edit events');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Verify token is valid
+            try {
+                const verifyResponse = await fetch('http://localhost:5000/api/admin/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!verifyResponse.ok) {
+                    throw new Error('Token verification failed');
+                }
+            } catch (error) {
+                console.error('Token verification failed:', error);
+                localStorage.removeItem('token');
+                localStorage.removeItem('adminToken');
+                alert('Session expired. Please login again.');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Reuse the existing eventId from above
+            if (!eventId) {
+                document.getElementById('status-message').textContent = 'No event ID provided.';
+                document.getElementById('status-message').className = 'status-message error';
+                return;
+            }
+
+            // Fetch event details
+            try {
+                const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.removeItem('token');
+                        window.location.href = 'admin-login.html';
+                        return;
+                    }
+                    throw new Error('Failed to fetch event');
+                }
+
+                const event = await response.json();
+                document.getElementById('eventName').value = event.eventName || event.title || '';
+                document.getElementById('clubName').value = event.clubName || event.club_name || '';
+                document.getElementById('eventType').value = event.eventType || event.event_type || '';
+                document.getElementById('department').value = event.department || '';
+                document.getElementById('venue').value = event.venue || event.location || '';
+                
+                // Convert ISO date to YYYY-MM-DD format for date input
+                if (event.date) {
+                    const dateStr = event.date.split('T')[0]; // Get YYYY-MM-DD part
+                    document.getElementById('date').value = dateStr;
+                }
+                
+                document.getElementById('timing').value = event.timing || '';
+                document.getElementById('registrationType').value = event.registrationType || event.registration_type || '';
+                
+                // Handle checkboxes for eventList
+                const existingEvents = (event.eventList || '').split(',').map(e => e.trim()).filter(e => e);
+                const eventListCheckboxes = document.querySelectorAll('#eventList input[type="checkbox"]');
+                const predefinedEvents = Array.from(eventListCheckboxes).map(cb => cb.value);
+                const customEvents = [];
+                
+                eventListCheckboxes.forEach(checkbox => {
+                    if (existingEvents.includes(checkbox.value)) {
+                        checkbox.checked = true;
+                    }
+                });
+                
+                // Check if there are any custom events (not in predefined list)
+                existingEvents.forEach(eventName => {
+                    if (!predefinedEvents.includes(eventName)) {
+                        customEvents.push(eventName);
+                    }
+                });
+                
+                // If there are custom events, check "Others" and show the input
+                if (customEvents.length > 0) {
+                    document.getElementById('othersCheckbox').checked = true;
+                    document.getElementById('othersInputContainer').style.display = 'block';
+                    document.getElementById('othersInput').value = customEvents.join(', ');
+                }
+                
+                document.getElementById('description').value = event.description || '';
+                document.getElementById('contact').value = event.contact || '';
+                document.getElementById('max_capacity').value = event.max_capacity || 0;
+                const posterPreview = document.getElementById('poster-preview');
+                if (event.poster) {
+                    // Prepend server URL if poster is a relative path
+                    const posterUrl = event.poster.startsWith('http') ? event.poster : `http://localhost:5000${event.poster}`;
+                    posterPreview.src = posterUrl;
+                    posterPreview.style.display = 'block';
+                }
+
+                // Preview new poster when selected
+                document.getElementById('poster').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            posterPreview.src = e.target.result;
+                            posterPreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('Please select a valid image file.');
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching event:', error);
+                document.getElementById('status-message').textContent = 'Failed to load event data.';
+                document.getElementById('status-message').className = 'status-message error';
+            }
+
+            // Handle form submission
+            document.getElementById('edit-event-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const submitBtn = document.getElementById('submit-btn');
+                const statusMessage = document.getElementById('status-message');
+                submitBtn.disabled = true;
+                statusMessage.textContent = 'Updating event...';
+                statusMessage.className = 'status-message loading';
+
+                const formData = new FormData();
+                formData.append('eventName', document.getElementById('eventName').value);
+                formData.append('clubName', document.getElementById('clubName').value);
+                formData.append('department', document.getElementById('department').value);
+                formData.append('venue', document.getElementById('venue').value);
+                formData.append('date', document.getElementById('date').value);
+                formData.append('timing', document.getElementById('timing').value);
+                formData.append('eventType', document.getElementById('eventType').value);
+                formData.append('registrationType', document.getElementById('registrationType').value);
+                
+                // Handle checkboxes for eventList (not select - it's checkboxes!)
+                const eventListCheckboxes = document.querySelectorAll('#eventList input[type="checkbox"]:checked');
+                let selectedEvents = Array.from(eventListCheckboxes).map(checkbox => checkbox.value);
+                
+                // Add custom events from "Others" input if checked
+                if (document.getElementById('othersCheckbox').checked) {
+                    const othersValue = document.getElementById('othersInput').value.trim();
+                    if (othersValue) {
+                        // Split by comma and trim each event
+                        const customEvents = othersValue.split(',').map(e => e.trim()).filter(e => e);
+                        // Remove "Others" from the list and add custom events
+                        selectedEvents = selectedEvents.filter(e => e !== 'Others');
+                        selectedEvents.push(...customEvents);
+                    } else {
+                        // Remove "Others" if no custom events entered
+                        selectedEvents = selectedEvents.filter(e => e !== 'Others');
+                    }
+                }
+                
+                formData.append('eventList', selectedEvents.join(', '));
+                
+                formData.append('description', document.getElementById('description').value);
+                formData.append('contact', document.getElementById('contact').value);
+                formData.append('max_capacity', document.getElementById('max_capacity').value);
+                const posterFile = document.getElementById('poster').files[0];
+                if (posterFile) {
+                    if (posterFile.type.startsWith('image/')) {
+                        formData.append('poster', posterFile);
+                    } else {
+                        statusMessage.textContent = 'Please upload a valid image file.';
+                        statusMessage.className = 'status-message error';
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers.get('Content-Type'));
+
+                    let result;
+                    const contentType = response.headers.get('Content-Type');
+                    if (!response.ok) {
+                        if (contentType && contentType.includes('application/json')) {
+                            result = await response.json();
+                        } else {
+                            console.error('Non-JSON response:', await response.text());
+                            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                        }
+
+                        if (response.status === 401 || response.status === 403) {
+                            localStorage.removeItem('token');
+                            window.location.href = 'admin-login.html';
+                            return;
+                        }
+                        throw new Error(result.message || 'Failed to update event');
+                    }
+
+                    result = await response.json();
+                    statusMessage.textContent = result.message || 'Event updated successfully!';
+                    statusMessage.className = 'status-message success';
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error updating event:', error);
+                    statusMessage.textContent = error.message || 'Failed to update event. Please try again!';
+                    statusMessage.className = 'status-message error';
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
