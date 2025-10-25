@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pricing - EventFlow</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link"><i class="fas fa-calendar"></i> Events</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-item"><a href="admin.html" class="nav-link"><i class="fas fa-user"></i> Admin</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn"><i class="fas fa-plus"></i> Create Event</a>
+                <a href="login.html" class="login-btn" id="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="#" class="login-btn" id="logout-btn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pricing-section" style="padding: 120px 24px 60px; max-width: 1200px; margin: 0 auto;">
+        <h2 style="text-align: center; font-size: 32px; color: #334155; margin-bottom: 40px;">Pricing Plans</h2>
+        <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;">
+            <div style="background: white; border-radius: 12px; padding: 24px; width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="color: #6b21a8; font-size: 24px; margin-bottom: 16px;">Free Plan</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">Basic event creation and management features.</p>
+                <ul style="list-style: none; padding-left: 0; color: #64748b; font-size: 14px;">
+                    <li>✔️ Create up to 3 events</li>
+                    <li>✔️ Basic analytics</li>
+                    <li>✔️ Community support</li>
+                </ul>
+                <p style="font-size: 24px; font-weight: 700; color: #6b21a8; margin: 24px 0;">$0 / month</p>
+                <button style="background-color: #6b21a8; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer;">Get Started</button>
+            </div>
+            <div style="background: white; border-radius: 12px; padding: 24px; width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="color: #6b21a8; font-size: 24px; margin-bottom: 16px;">Pro Plan</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">Advanced features for organizers and businesses.</p>
+                <ul style="list-style: none; padding-left: 0; color: #64748b; font-size: 14px;">
+                    <li>✔️ Unlimited events</li>
+                    <li>✔️ Advanced analytics and reports</li>
+                    <li>✔️ Priority support</li>
+                    <li>✔️ Custom branding</li>
+                </ul>
+                <p style="font-size: 24px; font-weight: 700; color: #6b21a8; margin: 24px 0;">$29 / month</p>
+                <button style="background-color: #6b21a8; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer;">Upgrade Now</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // Show logout button if logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                });
+            }
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            // Dropdown menu toggle for mobile
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow - Modern Event Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item admin-link">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn" id="create-event-btn" style="display: none;">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+                <a href="login.html" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+                <div class="account-menu" id="account-menu" style="display: none;">
+                    <a href="my-registrations.html" title="My Registrations" style="text-decoration: none;">
+                        <i class="fas fa-user-circle account-icon" id="account-icon"></i>
+                    </a>
+                    <div class="account-dropdown" id="account-dropdown">
+                        <div class="account-info">
+                            <h4 id="user-name">User Name</h4>
+                            <p id="user-email">user@example.com</p>
+                            <p id="user-role" style="font-size: 12px; color: #6b21a8; font-weight: bold;">Student</p>
+                        </div>
+                        <div class="dropdown-links" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                            <a href="my-registrations.html" style="display: block; padding: 8px 0; color: #6b21a8; text-decoration: none; font-weight: 600;">
+                                <i class="fas fa-ticket-alt"></i> My Registrations
+                            </a>
+                            <a href="managing-events.html" id="manage-events-link" style="display: none; padding: 8px 0; color: #6b21a8; text-decoration: none; font-weight: 600;">
+                                <i class="fas fa-cog"></i> Manage Events
+                            </a>
+                        </div>
+                        <div class="registered-events" id="registered-events" style="margin-top: 12px;">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Canvas Animation -->
+    <section class="hero">
+        <canvas id="gridCanvas"></canvas>
+        <div class="hero-content">
+            <h1 class="glitch-title" title="EventFlow">EventFlow</h1>
+            <h2 class="glitch-subtitle" title="Discover the Future of Events">Discover the Future of Events</h2>
+            <p class="hero-text">Experience electrifying moments</p>
+            <p class="hero-text">Where connections spark and memories ignite</p>
+            <a href="events.html" target="_blank">
+                <br><br>
+                <button class="cta-btn">EXPLORE NOW</button>
+            </a>
+        </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    
+    <!-- Upcoming Events Section with Dynamic Fetching -->
+    <section class="upcoming-events">
+        <div class="section-header">
+            <h2>Upcoming Events</h2>
+            <a href="browse-events.html" class="view-all-btn">View All</a>
+        </div>
+        <div class="upcoming-grid" id="upcoming-grid">
+            <!-- Events will be dynamically populated here -->
+        </div>
+    </section>
+    
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo-section">
+                    <a href="index.html" class="footer-logo">
+                        <i class="fas fa-bolt footer-logo-icon"></i>
+                        <span class="footer-logo-text">EventFlow</span>
+                    </a>
+                    <p class="footer-description">
+                        The modern platform for discovering, creating, and managing events that connect communities and bring people together.
+                    </p>
+                </div>
+
+                <div class="footer-nav">
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Discover</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="browse-events.html" class="footer-nav-link">All Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="calendar-view.html" class="footer-nav-link">Calendar</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Organize</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="create-event.html" class="footer-nav-link">Create Event</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="managing-events.html" class="footer-nav-link">Manage Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="pricing.html" class="footer-nav-link">Pricing</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Company</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="about.html" class="footer-nav-link">About Us</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="contact.html" class="footer-nav-link">Contact</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="careers.html" class="footer-nav-link">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+
+                <div class="footer-legal">
+                    <span>© 2025 EventFlow. All rights reserved.</span>
+                    <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const adminLink = document.querySelector('.admin-link');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const accountMenu = document.getElementById('account-menu');
+            const accountIcon = document.getElementById('account-icon');
+            const accountDropdown = document.getElementById('account-dropdown');
+            const userName = document.getElementById('user-name');
+            const userEmail = document.getElementById('user-email');
+            const userRole = document.getElementById('user-role');
+            const registeredEvents = document.getElementById('registered-events');
+            const upcomingGrid = document.getElementById('upcoming-grid');
+            const createEventBtn = document.getElementById('create-event-btn');
+
+            // Authentication Check
+            const token = localStorage.getItem('token');
+            if (token) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+                accountMenu.style.display = 'inline-flex';
+                fetchUserData();
+            }
+
+            // Logout Functionality
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.reload();
+            });
+
+            // Account Dropdown Toggle
+            accountIcon.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                accountDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!accountMenu.contains(e.target)) {
+                    accountDropdown.classList.remove('active');
+                }
+            });
+
+            // Fetch User Data and Registered Events
+            async function fetchUserData() {
+                try {
+                    // Fetch user info
+                    const userResponse = await fetch('http://localhost:5000/api/auth/verify', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!userResponse.ok) throw new Error('Failed to verify token');
+                    const userData = await userResponse.json();
+
+                    // Update UI with user info
+                    userName.textContent = userData.user.username || 'User';
+                    userEmail.textContent = userData.user.email || 'user@example.com';
+                    userRole.textContent = userData.user.user_type?.charAt(0).toUpperCase() + userData.user.user_type?.slice(1) || 'Student';
+                    
+                    // Show create event button only for organizers and admins
+                    if (userData.user.user_type === 'organizer' || userData.user.is_admin) {
+                        createEventBtn.style.display = 'inline-flex';
+                        const manageEventsLink = document.getElementById('manage-events-link');
+                        if (manageEventsLink) {
+                            manageEventsLink.style.display = 'block';
+                        }
+                    }
+
+                    // Try to fetch registered events (may not be implemented yet)
+                    try {
+                        const eventsResponse = await fetch('http://localhost:5000/api/my-events', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (eventsResponse.ok) {
+                            const events = await eventsResponse.json();
+                            renderRegisteredEvents(events);
+                        }
+                    } catch (eventError) {
+                        console.log('My events endpoint not available:', eventError);
+                        registeredEvents.innerHTML = '<p>No registered events</p>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Clear localStorage and redirect to login if token is invalid
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                }
+            }
+
+            function renderRegisteredEvents(events) {
+                if (events.length === 0) {
+                    registeredEvents.innerHTML = '<p>No registered events yet.</p>';
+                } else {
+                    registeredEvents.innerHTML = events.map(event => `
+                        <div class="registered-event">
+                            <p><strong>${event.eventName}</strong></p>
+                            <p>${event.date}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Mobile Menu Toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            // Dropdown Menu Toggle for Mobile
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            async function fetchUpcomingEvents() {
+    try {
+        let response = await fetch("http://localhost:5000/api/events");
+        if (!response.ok) throw new Error('Network response was not ok');
+        let events = await response.json();
+        let today = new Date().toISOString().split("T")[0];
+        let upcomingEvents = events.filter(event => event.date >= today)
+                                  .sort((a, b) => new Date(a.date) - new Date(b.date));
+        renderUpcomingEvents(upcomingEvents);
+    } catch (error) {
+        console.error("Error fetching upcoming events:", error);
+        upcomingGrid.innerHTML = "<p>Failed to load upcoming events.</p>";
+    }
+}
+            function renderUpcomingEvents(events) {
+                if (events.length === 0) {
+                    upcomingGrid.innerHTML = '<p>No upcoming events found.</p>';
+                    return;
+                }
+                
+                upcomingGrid.innerHTML = events.map(event => {
+                    const posterUrl = event.poster || event.image_url
+                        ? (event.poster || event.image_url).startsWith('http') 
+                            ? (event.poster || event.image_url)
+                            : (event.poster || event.image_url).startsWith('/') 
+                                ? `http://localhost:5000${event.poster || event.image_url}`
+                                : `http://localhost:5000/${event.poster || event.image_url}`
+                        : 'https://via.placeholder.com/300x200?text=No+Image';
+                    
+                    return `
+                    <div class="upcoming-card">
+                        <div class="upcoming-image" style="background-image: url('${posterUrl}');"></div>
+                        <div class="upcoming-details">
+                            <h3>${event.eventName || event.title}</h3>
+                            <p>${event.description ? (event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '')) : 'No description available'}</p>
+                            <div class="event-date">${event.date ? new Date(event.date).toLocaleDateString() : 'Date TBD'}</div>
+                            <div class="countdown" data-date="${event.date}">
+                                <span class="days">00</span>d
+                                <span class="hours">00</span>h
+                                <span class="minutes">00</span>m
+                                <span class="seconds">00</span>s
+                            </div>
+                            <a href="event-details.html?id=${event.id}" class="upcoming-btn">Learn More</a>
+                            <a href="event-details.html?id=${event.id}#register" class="register-btn">Register</a>
+                        </div>
+                    </div>
+                `}).join("");
+                initializeCountdownTimers();
+            }
+
+            function initializeCountdownTimers() {
+                document.querySelectorAll(".countdown").forEach(countdown => {
+                    const eventDate = new Date(countdown.getAttribute("data-date")).getTime();
+                    function updateCountdown() {
+                        let now = new Date().getTime();
+                        let timeLeft = eventDate - now;
+                        if (timeLeft <= 0) {
+                            countdown.innerHTML = "<span>Event Started!</span>";
+                            return;
+                        }
+                        let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                        let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        countdown.querySelector(".days").innerText = String(days).padStart(2, "0");
+                        countdown.querySelector(".hours").innerText = String(hours).padStart(2, "0");
+                        countdown.querySelector(".minutes").innerText = String(minutes).padStart(2, "0");
+                        countdown.querySelector(".seconds").innerText = String(seconds).padStart(2, "0");
+                    }
+                    setInterval(updateCountdown, 1000);
+                    updateCountdown();
+                });
+            }
+
+            // Fetch events on page load
+            fetchUpcomingEvents();
+
+            // Canvas Animation
+            const canvas = document.getElementById('gridCanvas');
+            const ctx = canvas.getContext('2d');
+            const heroSection = document.querySelector('.hero');
+            canvas.width = heroSection.offsetWidth;
+            canvas.height = heroSection.offsetHeight;
+
+            const config = {
+                gridSize: 40,
+                gridColor: '#6b21a8',
+                particleCount: 50,
+                particleSpeedMin: 0.5,
+                particleSpeedMax: 5,
+                particleColors: ['#ffffff', '#6b21a8', '#8b5cf6'],
+                trailLength: 100,
+                backgroundColor: '#2e1065',
+                rippleDuration: 2000,
+                rippleMaxRadius: 200
+            };
+
+            const occupiedLines = { horizontal: new Set(), vertical: new Set() };
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':,./<>?";
+
+            function createGrid() {
+                ctx.fillStyle = config.backgroundColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#8b5cf6');
+                gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+                ctx.strokeStyle = gradient;
+                for (let y = 0; y < canvas.height; y += config.gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+                for (let x = 0; x < canvas.width; x += config.gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+            }
+
+            class Particle {
+                constructor() {
+                    this.color = config.particleColors[Math.floor(Math.random() * config.particleColors.length)];
+                    this.speed = Math.random() * (config.particleSpeedMax - config.particleSpeedMin) + config.particleSpeedMin;
+                    this.reset();
+                }
+                update() {
+                    this.trail.push({ x: this.x, y: this.y });
+                    if (this.trail.length > config.trailLength) this.trail.shift();
+                    if (this.active) {
+                        if (this.direction === 'horizontal') {
+                            this.x += this.speed;
+                            if (this.x > canvas.width) {
+                                this.active = false;
+                                occupiedLines.horizontal.delete(this.y);
+                            }
+                        } else {
+                            this.y += this.speed;
+                            if (this.y > canvas.height) {
+                                this.active = false;
+                                occupiedLines.vertical.delete(this.x);
+                            }
+                        }
+                    } else {
+                        const allTrailPointsOffScreen = this.trail.every(point => 
+                            (this.direction === 'horizontal' && point.x > canvas.width) ||
+                            (this.direction === 'vertical' && point.y > canvas.height)
+                        );
+                        if (allTrailPointsOffScreen) this.reset();
+                    }
+                }
+                draw() {
+                    for (let i = 0; i < this.trail.length; i++) {
+                        const point = this.trail[i];
+                        const alpha = (i / this.trail.length);
+                        ctx.fillStyle = this.color.replace('1)', `${alpha})`);
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 0.4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                findAvailableLine() {
+                    const maxAttempts = 100;
+                    let attempts = 0;
+                    while (attempts < maxAttempts) {
+                        if (Math.random() > 0.5) {
+                            const y = Math.round(Math.random() * canvas.height / config.gridSize) * config.gridSize;
+                            if (!occupiedLines.horizontal.has(y)) {
+                                this.direction = 'horizontal';
+                                this.x = 0;
+                                this.y = y;
+                                occupiedLines.horizontal.add(y);
+                                return true;
+                            }
+                        } else {
+                            const x = Math.round(Math.random() * canvas.width / config.gridSize) * config.gridSize;
+                            if (!occupiedLines.vertical.has(x)) {
+                                this.direction = 'vertical';
+                                this.x = x;
+                                this.y = 0;
+                                occupiedLines.vertical.add(x);
+                                return true;
+                            }
+                        }
+                        attempts++;
+                    }
+                    return false;
+                }
+                reset() {
+                    if (this.findAvailableLine()) {
+                        this.trail = [];
+                        this.active = true;
+                        this.speed = Math.random() * (config.particleSpeedMax - config.particleSpeedMin) + config.particleSpeedMin;
+                    } else {
+                        this.active = false;
+                        this.trail = [];
+                    }
+                }
+            }
+
+            const particles = Array(config.particleCount).fill().map(() => new Particle());
+            let ripples = [];
+
+            class Ripple {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 0;
+                    this.maxRadius = config.rippleMaxRadius;
+                    this.startTime = Date.now();
+                }
+                update() {
+                    const elapsed = Date.now() - this.startTime;
+                    this.radius = (elapsed / config.rippleDuration) * this.maxRadius;
+                }
+                draw() {
+                    const alpha = 1 - (this.radius / this.maxRadius);
+                    ctx.strokeStyle = `rgba(216, 180, 254, ${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    if (Math.random() < 0.3) {
+                        ctx.fillStyle = `rgba(216, 180, 254, ${alpha})`;
+                        ctx.font = "16px monospace";
+                        const char = characters[Math.floor(Math.random() * characters.length)];
+                        ctx.fillText(char, this.x + (Math.random() - 0.5) * this.radius * 2, this.y + (Math.random() - 0.5) * this.radius * 2);
+                    }
+                }
+                isComplete() {
+                    return this.radius >= this.maxRadius;
+                }
+            }
+
+            function animate() {
+                createGrid();
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                ripples = ripples.filter(ripple => !ripple.isComplete());
+                ripples.forEach(ripple => {
+                    ripple.update();
+                    ripple.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = heroSection.offsetWidth;
+                canvas.height = heroSection.offsetHeight;
+                occupiedLines.horizontal.clear();
+                occupiedLines.vertical.clear();
+                particles.forEach(particle => particle.reset());
+            });
+
+            canvas.addEventListener('click', (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                ripples.push(new Ripple(x, y));
+            });
+            animate();
+        });
+    </script>
+</body>
+</html>

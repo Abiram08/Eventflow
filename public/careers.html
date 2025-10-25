@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .careers-section {
+            padding: 120px 24px 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .careers-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            color: white;
+        }
+        .careers-container h1 {
+            font-size: 56px;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .careers-container p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        .careers-content {
+            background: white;
+            padding: 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            color: #334155;
+            margin-top: 40px;
+        }
+        .careers-content h2 {
+            font-size: 32px;
+            margin-bottom: 24px;
+        }
+        .careers-content p {
+            color: #64748b;
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+        .careers-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            color: #6b21a8;
+            font-weight: 600;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 32px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        @media (max-width: 768px) {
+            .careers-container h1 {
+                font-size: 36px;
+            }
+            .careers-content {
+                padding: 40px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li class="nav-item"><a href="events.html" class="nav-link"><i class="fas fa-calendar"></i> Events</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="login.html" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="careers-section">
+        <div class="careers-container">
+            <h1><i class="fas fa-briefcase"></i> Join Our Team</h1>
+            <p>Help us build the future of event management</p>
+            
+            <div class="careers-content">
+                <h2>Careers at EventFlow</h2>
+                <p>We're always looking for talented individuals who are passionate about technology and creating amazing user experiences. At EventFlow, you'll work on challenging problems, collaborate with a talented team, and help shape the future of event management.</p>
+                
+                <h3 style="margin-top: 40px; margin-bottom: 16px;">Current Opportunities</h3>
+                <p>We're currently building our team! Check back soon for open positions, or send us your resume and we'll keep you in mind for future opportunities.</p>
+                
+                <div class="careers-email">
+                    <i class="fas fa-envelope"></i>
+                    <span>careers@eventflow.com</span>
+                </div>
+                
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 EventFlow. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

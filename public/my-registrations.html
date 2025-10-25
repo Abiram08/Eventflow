@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registrations - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 70px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 12px;
+            align-items: center;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #6b21a8;
+            background-color: #f3e8ff;
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 24px;
+        }
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            color: #6b21a8;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .filter-tab:hover {
+            border-color: #6b21a8;
+            color: #6b21a8;
+        }
+        .filter-tab.active {
+            background: #6b21a8;
+            color: white;
+            border-color: #6b21a8;
+        }
+        .registrations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        .registration-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .registration-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .event-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .meta-item i {
+            width: 16px;
+            color: #6b21a8;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .status-registered {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-waitlisted {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status-pending_approval {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .card-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: #6b21a8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #8b5cf6;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        .btn-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .btn-danger:hover {
+            background: #fecaca;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+        }
+        .empty-state i {
+            font-size: 64px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        @media (max-width: 768px) {
+            .registrations-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>EventFlow</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="events.html" class="nav-link"><i class="fas fa-calendar"></i> Events</a></li>
+                <li><a href="my-registrations.html" class="nav-link" style="color: #6b21a8; background: #f3e8ff;"><i class="fas fa-ticket-alt"></i> My Registrations</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-ticket-alt"></i> My Registrations</h1>
+            <p>View and manage all your event registrations</p>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">
+                <i class="fas fa-list"></i> All
+            </button>
+            <button class="filter-tab" data-filter="registered">
+                <i class="fas fa-check-circle"></i> Confirmed
+            </button>
+            <button class="filter-tab" data-filter="waitlisted">
+                <i class="fas fa-clock"></i> Waitlisted
+            </button>
+            <button class="filter-tab" data-filter="pending_approval">
+                <i class="fas fa-hourglass-half"></i> Pending
+            </button>
+            <button class="filter-tab" data-filter="cancelled">
+                <i class="fas fa-times-circle"></i> Cancelled
+            </button>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #6b21a8;"></i>
+            <p>Loading your registrations...</p>
+        </div>
+
+        <div id="registrations-container" class="registrations-grid" style="display: none;">
+            <!-- Registrations will be loaded here -->
+        </div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>No Registrations Found</h3>
+            <p>You haven't registered for any events yet.</p>
+            <a href="events.html" class="btn btn-primary">
+                <i class="fas fa-search"></i> Browse Events
+            </a>
+        </div>
+    </main>
+
+    <script>
+        let allRegistrations = [];
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert('Please login to view your registrations');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await loadRegistrations();
+            setupFilterTabs();
+        });
+
+        async function loadRegistrations() {
+            const token = localStorage.getItem('token');
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('registrations-container');
+            const emptyState = document.getElementById('empty-state');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/my-registrations', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch registrations');
+                }
+
+                allRegistrations = await response.json();
+                
+                loading.style.display = 'none';
+                
+                if (allRegistrations.length === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    container.style.display = 'grid';
+                    renderRegistrations(allRegistrations);
+                }
+            } catch (error) {
+                console.error('Error loading registrations:', error);
+                loading.style.display = 'none';
+                emptyState.style.display = 'block';
+                emptyState.querySelector('h3').textContent = 'Error Loading Registrations';
+                emptyState.querySelector('p').textContent = error.message;
+            }
+        }
+
+        function setupFilterTabs() {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    filterRegistrations();
+                });
+            });
+        }
+
+        function filterRegistrations() {
+            const filtered = currentFilter === 'all' 
+                ? allRegistrations 
+                : allRegistrations.filter(reg => reg.status === currentFilter);
+            
+            renderRegistrations(filtered);
+        }
+
+        function renderRegistrations(registrations) {
+            const container = document.getElementById('registrations-container');
+            
+            if (registrations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-filter"></i>
+                        <h3>No Registrations Found</h3>
+                        <p>No registrations match the selected filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = registrations.map(reg => {
+                const statusClass = `status-${reg.status}`;
+                const statusText = reg.status.replace('_', ' ').toUpperCase();
+                const eventDate = new Date(reg.event.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                const registeredDate = new Date(reg.registered_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                return `
+                    <div class="registration-card">
+                        <img src="${reg.event.image_url || '/uploads/default-event.jpg'}" 
+                             alt="${reg.event.title}" 
+                             class="event-image"
+                             onerror="this.src='/uploads/default-event.jpg'">
+                        <div class="card-content">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <h3 class="event-title">${reg.event.title}</h3>
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${eventDate}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${reg.event.location}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Registered: ${registeredDate}</span>
+                                </div>
+                                ${reg.payment_status ? `
+                                <div class="meta-item">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Payment: ${reg.payment_status}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div class="card-actions">
+                                <a href="event-details.html?id=${reg.event.id}" class="btn btn-primary">
+                                    <i class="fas fa-eye"></i> View Event
+                                </a>
+                                ${reg.status === 'registered' || reg.status === 'waitlisted' ? `
+                                <button class="btn btn-danger" onclick="cancelRegistration(${reg.id}, '${reg.event.title}')">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function cancelRegistration(registrationId, eventTitle) {
+            if (!confirm(`Are you sure you want to cancel your registration for "${eventTitle}"?`)) {
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/registrations/${registrationId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'cancelled' })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to cancel registration');
+                }
+
+                alert('Registration cancelled successfully');
+                await loadRegistrations();
+            } catch (error) {
+                console.error('Error cancelling registration:', error);
+                alert('Failed to cancel registration: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 70px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+        .logo:hover {
+            color: #8b5cf6;
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 12px;
+            align-items: center;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #6b21a8;
+            background-color: #f3e8ff;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 220px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .create-btn,
+        .login-btn {
+            background-color: #6b21a8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .create-btn:hover,
+        .login-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+        .admin-section {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-section h2 {
+            color: #334155;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .event {
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .event:last-child {
+            border-bottom: none;
+        }
+        .event h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .event p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .event-status {
+            font-weight: bold;
+            color: #16a34a;
+        }
+        .event-status.pending {
+            color: #dc2626;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .approve-btn {
+            background-color: #16a34a;
+            color: white;
+        }
+        .approve-btn:hover {
+            background-color: #15803d;
+        }
+        .edit-btn {
+            background-color: #2563eb;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .error-message {
+            color: #dc2626;
+            text-align: center;
+            padding: 20px;
+        }
+        @media screen and (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .nav-menu.active {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="events.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="calendar-view.html" class="dropdown-item">Calendar</a></li>
+                        <li><a href="speakers.html" class="dropdown-item">Speakers</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link active">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+                <a href="login.html" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="admin-section">
+        <h2>Admin Panel - Approve & Edit Events</h2>
+        <div id="events-list"></div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const eventsList = document.getElementById('events-list');
+            
+            // Check authentication
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+            if (!token) {
+                alert('Please login as admin first');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Verify token is valid and user is admin
+            async function verifyAdminToken() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/admin/verify', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Token verification failed');
+                    }
+                    
+                    const data = await response.json();
+                    if (!data.is_admin) {
+                        throw new Error('Not an admin user');
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Admin verification failed:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('adminToken');
+                    alert('Session expired or invalid. Please login again.');
+                    window.location.href = 'admin-login.html';
+                    return false;
+                }
+            }
+
+            // Verify token before proceeding
+            verifyAdminToken().then(isValid => {
+                if (isValid) {
+                    fetchEvents();
+                }
+            });
+
+            mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Show logout button and hide login button
+            if (logoutBtn && loginBtn) {
+                logoutBtn.style.display = 'inline-block';
+                loginBtn.style.display = 'none';
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'admin-login.html';
+                });
+            }
+
+            async function fetchEvents() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/admin/events', {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Fetch events error:', errorData);
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    const events = await response.json();
+                    if (events.length === 0) {
+                        eventsList.innerHTML = '<p>No events found.</p>';
+                        return;
+                    }
+
+                    eventsList.innerHTML = events.map(event => `
+                        <div class="event">
+                            <h3>${event.title || event.eventName || 'Untitled Event'}</h3>
+                            <p><strong>Club:</strong> ${event.club_name || event.clubName || 'N/A'}</p>
+                            <p><strong>Department:</strong> ${event.department || 'N/A'}</p>
+                            <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()} | <strong>Time:</strong> ${event.timing || 'TBD'}</p>
+                            <p><strong>Venue:</strong> ${event.location || event.venue || 'TBD'}</p>
+                            <p><strong>Description:</strong> ${event.description || 'No description provided'}</p>
+                            <p><strong>Status:</strong> <span class="event-status ${event.approved ? '' : 'pending'}">${event.approved ? 'Approved' : 'Pending Approval'}</span></p>
+                            ${!event.approved ? `<button class="approve-btn" onclick="approveEvent(${event.id})">Approve</button>` : ''}
+                            <button class="edit-btn" onclick="editEvent(${event.id})">Edit</button>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error fetching events:', error);
+                    eventsList.innerHTML = '<p class="error-message">Failed to load events. Please try again later.</p>';
+                }
+            }
+
+            window.approveEvent = async function(id) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/admin/events/${id}/approve`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ approved: true })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to approve event');
+                    }
+                    fetchEvents();
+                } catch (error) {
+                    console.error('Error approving event:', error);
+                    alert('Failed to approve event. Please try again.');
+                }
+            };
+
+            window.editEvent = (id) => window.location.href = `edit-event.html?id=${id}`;
+
+            // Removed fetchEvents() call from here - it's now called after token verification
+        });
+    </script>
+</body>
+</html>

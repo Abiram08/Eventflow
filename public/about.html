@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300&family=Fira+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 150px 24px 100px;
+            text-align: center;
+            color: white;
+        }
+        .about-hero h1 {
+            font-size: 56px;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .about-hero p {
+            font-size: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+        .about-section {
+            padding: 80px 24px;
+            background: white;
+        }
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        .about-card {
+            background: #f8fafc;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .about-card:hover {
+            transform: translateY(-8px);
+        }
+        .about-card i {
+            font-size: 48px;
+            color: #6b21a8;
+            margin-bottom: 24px;
+        }
+        .about-card h3 {
+            color: #334155;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .about-card p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+        .mission-section {
+            background: #f8fafc;
+            padding: 80px 24px;
+        }
+        .mission-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .mission-content h2 {
+            color: #334155;
+            font-size: 42px;
+            margin-bottom: 32px;
+        }
+        .mission-content p {
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+        .stats-section {
+            padding: 80px 24px;
+            background: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6b21a8;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            color: #64748b;
+            font-size: 16px;
+        }
+        @media (max-width: 768px) {
+            .about-hero h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li class="nav-item"><a href="events.html" class="nav-link"><i class="fas fa-calendar"></i> Events</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-item"><a href="admin.html" class="nav-link"><i class="fas fa-user"></i> Admin</a></li>
+            </ul>
+            <div class="user-menu">
+                <a href="create-event.html" class="create-btn"><i class="fas fa-plus"></i> Create Event</a>
+                <a href="login.html" class="login-btn" id="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="#" class="login-btn" id="logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="about-hero">
+        <h1>About EventFlow</h1>
+        <p>Your trusted partner in creating memorable events and connecting communities worldwide</p>
+    </section>
+
+    <section class="mission-section">
+        <div class="mission-content">
+            <h2>Our Mission</h2>
+            <p>At EventFlow, we believe in the power of bringing people together. Our mission is to make event discovery, creation, and management seamless and accessible for everyone.</p>
+            <p>We're dedicated to providing a platform that empowers organizers to create amazing experiences while making it easy for attendees to discover and participate in events that matter to them.</p>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-container">
+            <h2 style="text-align: center; font-size: 42px; color: #334155; margin-bottom: 20px;">What We Offer</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Event Management</h3>
+                    <p>Comprehensive tools to create, manage, and track your events from start to finish.</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Community Building</h3>
+                    <p>Connect with like-minded individuals and build lasting relationships through shared experiences.</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Platform</h3>
+                    <p>Your data is protected with industry-leading security measures and encryption.</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access EventFlow from any device with our fully responsive design.</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Real-time Updates</h3>
+                    <p>Stay informed with instant notifications about events and registrations.</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Analytics</h3>
+                    <p>Track event performance with detailed analytics and insights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <h2 style="text-align: center; font-size: 42px; color: #334155; margin-bottom: 60px;">EventFlow by Numbers</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Events Hosted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventFlow</h3>
+                    <p>Your trusted event management platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EventFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
+            
+            const token = localStorage.getItem('token');
+            if (token) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+            }
+            
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.reload();
+            });
+        });
+    </script>
+</body>
+</html>

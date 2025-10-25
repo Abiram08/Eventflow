@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speakers - EventFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .logo:hover {
+            color: #8b5cf6;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 20px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            color: #6b21a8;
+            background-color: #f3e8ff;
+            font-weight: 600;
+        }
+
+        .nav-link i {
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 220px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            display: block;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Button Styles with Colors */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .create-btn,
+        .login-btn {
+            background-color: #6b21a8;
+            color: white;
+        }
+
+        .create-btn:hover,
+        .login-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .speaker-btn {
+            background-color: #6b21a8;
+            color: white;
+        }
+
+        .speaker-btn:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        .nav-menu.active {
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Speakers Section */
+        .speakers-section {
+            padding: 120px 24px 60px;
+            background: #f8fafc;
+            flex: 1;
+        }
+
+        .speakers-header {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .speakers-header h1 {
+            color: #334155;
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .speakers-subtitle {
+            color: #64748b;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .speakers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .speaker-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .speaker-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .speaker-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .speaker-details {
+            padding: 24px;
+        }
+
+        .speaker-details h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .speaker-title {
+            color: #6b21a8;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .speaker-bio {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .speaker-event {
+            color: #475569;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        /* Modal Styles */
+        .speaker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .speaker-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #64748b;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .modal-content h2 {
+            color: #334155;
+            margin-bottom: 20px;
+        }
+
+        .modal-details p {
+            color: #64748b;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: white;
+            padding: 80px 24px 40px;
+            margin-top: auto;
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo-section {
+            flex: 0 0 300px;
+        }
+
+        .footer-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            font-size: 24px;
+            color: #6b21a8;
+        }
+
+        .footer-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6b21a8;
+        }
+
+        .footer-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-nav {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+        }
+
+        .footer-nav-column {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .footer-nav-title {
+            color: #334155;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-nav-list {
+            list-style: none;
+        }
+
+        .footer-nav-item {
+            margin-bottom: 12px;
+        }
+
+        .footer-nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-nav-link:hover {
+            color: #6b21a8;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-social-link {
+            color: #64748b;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .footer-social-link:hover {
+            color: #6b21a8;
+            transform: translateY(-2px);
+        }
+
+        .footer-legal {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .footer-legal-link {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-legal-link:hover {
+            color: #6b21a8;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 12px 16px;
+            }
+
+            .dropdown-menu {
+                position: static;
+                width: 100%;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                background-color: #f8fafc;
+                margin-top: 4px;
+                display: none;
+            }
+
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+
+            .user-menu {
+                gap: 12px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .speakers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .speakers-header h1 {
+                font-size: 28px;
+            }
+
+            .speakers-subtitle {
+                font-size: 16px;
+            }
+
+            .footer-top {
+                gap: 40px;
+            }
+
+            .footer-logo-section {
+                flex: 0 0 100%;
+            }
+
+            .footer-nav {
+                gap: 40px;
+            }
+
+            .footer-nav-column {
+                flex: 0 0 calc(50% - 20px);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .nav-container {
+                padding: 0 16px;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .create-btn span,
+            .login-btn span,
+            .logout-btn span {
+                display: none;
+            }
+
+            .footer-nav-column {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>EventFlow</span>
+            </a>
+            
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="events.html" class="nav-link active">
+                        <i class="fas fa-calendar"></i> Events
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="allevents.html" class="dropdown-item">All Events</a></li>
+                        <li><a href="speakers.html" class="dropdown-item">Speakers</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user"></i> Admin
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-menu">
+                <a href="create-event.html" class="btn create-btn">
+                    <i class="fas fa-plus"></i> <span>Create Event</span>
+                </a>
+                <a href="login.html" class="btn login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> <span>Login</span>
+                </a>
+                <a href="#" class="btn logout-btn" id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Speakers Section -->
+    <section class="speakers-section">
+        <div class="speakers-header">
+            <h1>Featured Speakers</h1>
+            <p class="speakers-subtitle">Meet the inspiring voices behind our events</p>
+        </div>
+        <div class="speakers-grid" id="speakers-grid"></div>
+    </section>
+
+    <!-- Speaker Modal -->
+    <div class="speaker-modal" id="speaker-modal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <div class="modal-image" id="modal-image"></div>
+            <h2 id="modal-name"></h2>
+            <div class="modal-details">
+                <p><strong>Title:</strong> <span id="modal-title"></span></p>
+                <p><strong>Bio:</strong> <span id="modal-bio"></span></p>
+                <p><strong>Event:</strong> <span id="modal-event"></span></p>
+                <p><strong>Date:</strong> <span id="modal-date"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo-section">
+                    <a href="index.html" class="footer-logo">
+                        <i class="fas fa-bolt footer-logo-icon"></i>
+                        <span class="footer-logo-text">EventFlow</span>
+                    </a>
+                    <p class="footer-description">
+                        The modern platform for discovering, creating, and managing events that connect communities and bring people together.
+                    </p>
+                </div>
+
+                <div class="footer-nav">
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Discover</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="browse-events.html" class="footer-nav-link">All Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                            <li class="footer-nav-item">
+                                <a href="calendar-view.html" class="footer-nav-link">Calendar</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Organize</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="create-event.html" class="footer-nav-link">Create Event</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="managing-events.html" class="footer-nav-link">Manage Events</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="pricing.html" class="footer-nav-link">Pricing</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-nav-column">
+                        <h4 class="footer-nav-title">Company</h4>
+                        <ul class="footer-nav-list">
+                            <li class="footer-nav-item">
+                                <a href="about.html" class="footer-nav-link">About Us</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="contact.html" class="footer-nav-link">Contact</a>
+                            </li>
+                            <li class="footer-nav-item">
+                                <a href="careers.html" class="footer-nav-link">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+
+                <div class="footer-legal">
+                    <span>© 2025 EventFlow. All rights reserved.</span>
+                    <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+                    <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            const speakersGrid = document.getElementById('speakers-grid');
+            const modal = document.getElementById('speaker-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalName = document.getElementById('modal-name');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBio = document.getElementById('modal-bio');
+            const modalEvent = document.getElementById('modal-event');
+            const modalDate = document.getElementById('modal-date');
+
+            // Mobile menu functionality
+            mobileMenuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 992) {
+                        this.classList.toggle('active');
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Highlight current page in nav
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath || (href === 'events.html' && currentPath === 'speakers.html')) {
+                    link.classList.add('active');
+                }
+            });
+
+            // MongoDB backend logic for speakers
+            async function fetchSpeakers() {
+                try {
+                    // Fetch speakers with a limit of 5
+                    const response = await fetch('http://localhost:5000/api/speakers?limit=5');
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    let speakers = await response.json();
+
+                    // For demonstration, if no real backend is available, use these 5 sample speakers
+                    if (!speakers || speakers.length === 0) {
+                        speakers = [
+                            {
+                                name: "Dr. Jane Smith",
+                                title: "AI Researcher",
+                                bio: "Expert in artificial intelligence with over 15 years of experience.",
+                                event: "Winter Tech Summit 2024",
+                                date: "2024-12-10",
+                                image: "speaker1.jpg"
+                            },
+                            {
+                                name: "Michael Chen",
+                                title: "Artist & Curator",
+                                bio: "Renowned for blending technology with traditional art forms.",
+                                event: "Art Festival 2024",
+                                date: "2024-11-15",
+                                image: "speaker2.jpg"
+                            },
+                            {
+                                name: "Sarah Johnson",
+                                title: "Nonprofit Leader",
+                                bio: "Advocate for community engagement and social impact.",
+                                event: "Charity Run 2024",
+                                date: "2024-10-05",
+                                image: "speaker3.jpg"
+                            },
+                            {
+                                name: "Akira Tanaka",
+                                title: "Cultural Historian",
+                                bio: "Specialist in global cultural traditions and their modern relevance.",
+                                event: "Cultural Night 2024",
+                                date: "2024-09-20",
+                                image: "speaker4.jpg"
+                            },
+                            {
+                                name: "Prof. Elena Rodriguez",
+                                title: "Science Educator",
+                                bio: "Passionate about inspiring the next generation of scientists.",
+                                event: "Science Fair 2024",
+                                date: "2024-08-15",
+                                image: "speaker5.jpg"
+                            }
+                        ];
+                    }
+
+                    renderSpeakers(speakers);
+                } catch (error) {
+                    console.error('Error fetching speakers:', error);
+                    speakersGrid.innerHTML = '<p>Failed to load speakers. Please try again later.</p>';
+                }
+            }
+
+            function renderSpeakers(speakers) {
+                if (speakers.length === 0) {
+                    speakersGrid.innerHTML = '<p>No speakers found.</p>';
+                    return;
+                }
+
+                speakersGrid.innerHTML = speakers.map(speaker => `
+                    <div class="speaker-card">
+                        <div class="speaker-image" style="background-image: url('${speaker.image || 'default-speaker.jpg'}');"></div>
+                        <div class="speaker-details">
+                            <h3>${speaker.name}</h3>
+                            <p class="speaker-title">${speaker.title}</p>
+                            <p class="speaker-bio">${speaker.bio.substring(0, 100)}${speaker.bio.length > 100 ? '...' : ''}</p>
+                            <p class="speaker-event">Spoke at: ${speaker.event}</p>
+                            <button class="btn speaker-btn" data-details='${JSON.stringify({
+                                name: speaker.name,
+                                title: speaker.title,
+                                bio: speaker.bio,
+                                event: speaker.event,
+                                date: new Date(speaker.date).toLocaleDateString(),
+                                image: speaker.image || 'default-speaker.jpg'
+                            })}'>Learn More</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add event listeners to speaker cards and buttons
+                document.querySelectorAll('.speaker-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('speaker-btn')) return; // Prevent double trigger
+                        const btn = this.querySelector('.speaker-btn');
+                        showModal(btn);
+                    });
+                });
+
+                document.querySelectorAll('.speaker-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        showModal(this);
+                    });
+                });
+            }
+
+            function showModal(btn) {
+                const details = JSON.parse(btn.dataset.details);
+                modalImage.style.backgroundImage = `url('${details.image}')`;
+                modalName.textContent = details.name;
+                modalTitle.textContent = details.title || 'Not specified';
+                modalBio.textContent = details.bio;
+                modalEvent.textContent = details.event || 'Not specified';
+                modalDate.textContent = details.date;
+                modal.classList.add('active');
+            }
+
+            // Modal close functionality
+            closeModal.addEventListener('click', function() {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            // Fetch speakers on page load
+            fetchSpeakers();
+        });
+    </script>
+</body>
+</html>
